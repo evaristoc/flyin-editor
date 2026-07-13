@@ -1,0 +1,28 @@
+{
+  "name": "Star 6 Nodes",
+  "nodes": [
+    {"id": 0, "label": "Hub",  "x": 0.5,  "y": 0.5},
+    {"id": 1, "label": "N1",   "x": 0.5,  "y": 0.92},
+    {"id": 2, "label": "N2",   "x": 0.87, "y": 0.71},
+    {"id": 3, "label": "N3",   "x": 0.87, "y": 0.29},
+    {"id": 4, "label": "N4",   "x": 0.5,  "y": 0.08},
+    {"id": 5, "label": "N5",   "x": 0.13, "y": 0.29},
+    {"id": 6, "label": "N6",   "x": 0.13, "y": 0.71}
+  ],
+  "edges": [
+    {"from": 0, "to": 1},
+    {"from": 0, "to": 2},
+    {"from": 0, "to": 3},
+    {"from": 0, "to": 4},
+    {"from": 0, "to": 5},
+    {"from": 0, "to": 6},
+    {"from": 1, "to": 2},
+    {"from": 3, "to": 4},
+    {"from": 5, "to": 6}
+  ],
+  "agents": [
+    {"id": 0, "name": "Agent X", "color": "#69ff47", "path": [1, 0, 3, 0, 5, 0, 1]},
+    {"id": 1, "name": "Agent Y", "color": "#ff9100", "path": [2, 1, 0, 4, 0, 6, 2]},
+    {"id": 2, "name": "Agent Z", "color": "#e040fb", "path": [4, 3, 0, 6, 5, 0, 4]}
+  ]
+}

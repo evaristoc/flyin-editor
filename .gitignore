@@ -30,6 +30,8 @@ ubuntu-*.log
 .venv/*
 __pycache__
 .mypy_cache
+poetry.lock
+
 
 # log files #
 *.egg-info/
@@ -48,8 +50,7 @@ node_modules/*
 ###########
 # other folders
 ###########
+maps/
 references/*
 testing/*
-
-
-
+.sfdx/

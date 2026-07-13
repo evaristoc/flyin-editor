@@ -3,13 +3,13 @@ from typing import Optional
 from ..config.config import SOLUTIONS_DIR
 from ..services.graph_loader import GraphError, load_graph
 
-router = APIRouter(prefix="/api/graphs", tags=["graphs"])
+router = APIRouter(prefix="/api", tags=["graphs"])
 
 # In-memory graph state
 _current_graph: Optional[dict] = None
 
 
-@router.get("")
+@router.get("/graph")
 def get_graph() -> dict:
     """Return current graph state."""
     if _current_graph is None:
@@ -25,7 +25,7 @@ def list_graph_files() -> dict:
 
 
 @router.post("/files/{filename}")
-def load(filename: str) -> dict:
+def graph_loader(filename: str) -> dict:
     """Return processed graph files."""
     global _current_graph
     try:

@@ -42,7 +42,7 @@ async function api(path, method = 'GET') {
 //  - all files available in the /api/files endpoint
 // ════════════════════════════════════════════════════════════════
 async function loadFileList() {
-    const { files } = await api('/api/files');
+    const { files } = await api('api/files');
     const el = document.getElementById('file-list');
     if (!files.length) {
         el.innerHTML = '<div style="color:var(--muted);font-size:.7rem">No files found</div>';
@@ -72,7 +72,7 @@ async function loadGraph(filename, btn) {
     stopAnimation();
     setStatus('status', 'loading…');
     try {
-        await api(`/api/load/${filename}`, 'POST');
+        await api(`api/files/${filename}`, 'POST');
         graph = await api('/api/graph', 'GET');
     } catch (e) {
         toast(`Error: ${e.message}`, true);

@@ -1,12 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from .config.config import PROJECT_ROOT
+from fastapi.middleware.cors import CORSMiddleware
+from .config.config import PROJECT_ROOT, FRONTEND_URL
 from .routers.graphs import router as graphs_router
 # from .routers.editor import router as editor_router
-
 app = FastAPI(title="Graph Scheduler Demo")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        FRONTEND_URL,
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(graphs_router)
 # app.include_router(editor_router)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(request.method, request.url)
+    response = await call_next(request)
+    print(response.status_code)
+    return response
 
 STATIC_DIR = PROJECT_ROOT / "frontend/static"
 

@@ -5,6 +5,7 @@
 .env
 .env.production
 .env.development
+.env.local
 *.private_key
 id_rsa
 id_ed25519
@@ -53,3 +54,4 @@ node_modules/*
 data/
 references/*
 testing/*
+requests/*

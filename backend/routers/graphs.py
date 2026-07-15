@@ -17,14 +17,14 @@ def get_graph() -> dict:
     return _current_graph
 
 
-@router.get("/files")
+@router.get("/solutions")
 def list_graph_files() -> dict:
     """Return available config file names."""
     files = sorted(f.name for f in SOLUTIONS_DIR.glob("*.json"))
     return {"files": files}
 
 
-@router.post("/files/{filename}")
+@router.post("/solution/{filename}")
 def graph_loader(filename: str) -> dict:
     """Return processed graph files."""
     global _current_graph

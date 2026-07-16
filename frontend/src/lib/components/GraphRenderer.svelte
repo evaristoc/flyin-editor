@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import Plotly from 'plotly.js-dist-min';
   import type { Data, Layout, Config } from 'plotly.js';
-
+  import type { Graph, Node, Edge, Agent } from '$lib/types';
   // 1. Declare props using the $props() rune
-  let { solutionData = null } = $props<{ solutionData: any }>();
+  let { solutionData = null } = $props<{ solutionData: Graph }>();
 
   let plotDiv: HTMLDivElement;
 
@@ -19,7 +19,7 @@
     hovermode: 'closest'
   };
 
-  // 2. Use $effect to reactively trigger Plotly updates when solutionData changes
+  // Use $effect to reactively trigger Plotly updates when solutionData changes
   $effect(() => {
     if (plotDiv && solutionData) {
       updatePlot(solutionData);

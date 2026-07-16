@@ -24,7 +24,7 @@ def list_graph_files() -> dict:
     return {"files": files}
 
 
-@router.post("/solution/{filename}")
+@router.get("/solution/{filename}")
 def graph_loader(filename: str) -> dict:
     """Return processed graph files."""
     global _current_graph

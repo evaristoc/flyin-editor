@@ -1,11 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getSolutions } from "$lib/api/solutions";
+    import { getSolutions, getSolution } from "$lib/api/solutions";
     import GraphRenderer from '$lib/components/GraphRenderer.svelte';
   // import { getSolutionsList, getSolutionContent } from '$lib/api/solutions';
+    import type { Graph } from '$lib/types/graph_types';
 
     let fileNames = $state([]);
-    let selectedSolution = $state<any>(null);
+    let selectedSolution = $state<Graph>(null);
 	let error = $state(null);
 
     // async function loadSolutions() {
@@ -34,11 +35,9 @@
       // selectedSolution = await getSolutionContent(name);
       
       // Mocking selected file load test:
-      selectedSolution = {
-        name: name,
-        x: [1, 2, 3, 4, 5],
-        y: name === 'solution_A.json' ? [10, 15, 13, 17, 22] : [8, 5, 11, 9, 15]
-      };
+      const data = await getSolution(name);
+      selectedSolution = data.graph as Graph;
+      console.log(selectedSolution);
     } catch (error) {
       console.error('Failed to load solution contents:', error);
     }

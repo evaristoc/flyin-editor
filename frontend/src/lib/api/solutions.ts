@@ -5,5 +5,10 @@ export async function getSolutions(){
 }
 
 export async function getSolution(name: string){
-	return apiFetch(`/solution/${name}`);
+	const res = await apiFetch(`/api/solution/${name}`);
+	if (res.status != 'ok'){
+		throw new Error(`HTTP error connecting to solution/{name} endpoint: ${res.status}`);
+	}
+	console.log(res);
+	return res;
 }

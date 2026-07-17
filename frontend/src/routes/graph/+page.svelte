@@ -7,7 +7,19 @@
 
     let fileNames = $state([]);
     let selectedSolution = $state<Graph>(null);
-	let error = $state(null);
+    // let error = $state(null);
+
+    onMount(() => {
+      fileNames = getSolutions();
+    });
+
+    async function loadSolution(name: string) {
+    try {
+      selectedSolution = await getSolution(name);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
     // async function loadSolutions() {
     //     try {
@@ -19,29 +31,29 @@
     // }
 
     // loadSolutions();
-	onMount(async () => {
-        try{
-			const data = await getSolutions();
-			console.log("component:", data);
-			fileNames = data.files; // adjust property name
-		} catch (e) {
-			error = e.message
-		}
-    });
+	// onMount(async () => {
+  //       try{
+	// 		const data = await getSolutions();
+	// 		console.log("component:", data);
+	// 		fileNames = data.files; // adjust property name
+	// 	} catch (e) {
+	// 		error = e.message
+	// 	}
+  //   });
 
-    async function loadSolution(name: string) {
-    try {
-      // 2. Load the content of the selected file
-      // selectedSolution = await getSolutionContent(name);
+  //   async function loadSolution(name: string) {
+  //   try {
+  //     // 2. Load the content of the selected file
+  //     // selectedSolution = await getSolutionContent(name);
       
-      // Mocking selected file load test:
-      const data = await getSolution(name);
-      selectedSolution = data.graph as Graph;
-      console.log(selectedSolution);
-    } catch (error) {
-      console.error('Failed to load solution contents:', error);
-    }
-  }
+  //     // Mocking selected file load test:
+  //     const data = await getSolution(name);
+  //     selectedSolution = data.graph as Graph;
+  //     console.log(selectedSolution);
+  //   } catch (error) {
+  //     console.error('Failed to load solution contents:', error);
+  //   }
+  // }
 </script>
 <div class="app-layout">
   <aside class="sidebar">

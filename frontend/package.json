@@ -39,6 +39,7 @@
 		"vitest-browser-svelte": "^2.1.1"
 	},
 	"dependencies": {
+		"konva": "^10.3.0",
 		"plotly.js-dist-min": "^3.7.0"
 	}
 }

@@ -4,6 +4,12 @@ import adapter from '@sveltejs/adapter-auto';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	server: {
+		watch: {
+		usePolling: true,
+		interval: 100
+		}
+  	},
 	plugins: [
 		sveltekit({
 			compilerOptions: {

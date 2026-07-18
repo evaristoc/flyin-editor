@@ -21,39 +21,6 @@
     }
   }
 
-    // async function loadSolutions() {
-    //     try {
-    //         solutions = await getSolutions();
-	// 		console.log(solutions);
-    //     } catch (e) {
-    //         error = String(e);
-    //     }
-    // }
-
-    // loadSolutions();
-	// onMount(async () => {
-  //       try{
-	// 		const data = await getSolutions();
-	// 		console.log("component:", data);
-	// 		fileNames = data.files; // adjust property name
-	// 	} catch (e) {
-	// 		error = e.message
-	// 	}
-  //   });
-
-  //   async function loadSolution(name: string) {
-  //   try {
-  //     // 2. Load the content of the selected file
-  //     // selectedSolution = await getSolutionContent(name);
-      
-  //     // Mocking selected file load test:
-  //     const data = await getSolution(name);
-  //     selectedSolution = data.graph as Graph;
-  //     console.log(selectedSolution);
-  //   } catch (error) {
-  //     console.error('Failed to load solution contents:', error);
-  //   }
-  // }
 </script>
 <div class="app-layout">
   <aside class="sidebar">

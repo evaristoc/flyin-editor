@@ -1,0 +1,13 @@
+[project]
+name = "fly-in"
+version = "0.1.0"
+description = "Fly-in drones"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "pydantic",
+	"jinja2",
+    "python-dotenv",
+]

@@ -5,6 +5,7 @@
 .env
 .env.production
 .env.development
+.env.local
 *.private_key
 id_rsa
 id_ed25519
@@ -30,6 +31,8 @@ ubuntu-*.log
 .venv/*
 __pycache__
 .mypy_cache
+poetry.lock
+
 
 # log files #
 *.egg-info/
@@ -48,8 +51,7 @@ node_modules/*
 ###########
 # other folders
 ###########
+data/
 references/*
 testing/*
-
-
-
+requests/*

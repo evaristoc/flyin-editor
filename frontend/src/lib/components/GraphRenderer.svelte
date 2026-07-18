@@ -1,257 +1,251 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
-  import type { Graph, Node } from '$lib/types';
+	import { onMount, onDestroy } from 'svelte';
+	import type { Graph, ZoneEdge, ZoneNode } from '$lib/types/schema_types';
 
-  let { solutionData = null } = $props<{ solutionData: Graph | null }>();
+	let { solutionData = null } = $props<{ solutionData: Graph | null }>();
 
-  let containerDiv: HTMLDivElement;
-  let KonvaModule: any = null;
-  let stage: any = null;
-  let interactionLayer: any = null;
+	let containerDiv: HTMLDivElement;
+	let KonvaModule: any = null;
+	let stage: any = null;
+	let interactionLayer: any = null;
 
-  // Tooltip tracking state
-  let tooltipVisible = $state<boolean>(false);
-  let tooltipText = $state<string>('');
-  let tooltipX = $state<number>(0);
-  let tooltipY = $state<number>(0);
+	// Tooltip tracking state
+	let tooltipVisible = $state<boolean>(false);
+	let tooltipText = $state<string>('');
+	let tooltipX = $state<number>(0);
+	let tooltipY = $state<number>(0);
 
-  // Active hover highlighting state
-  let hoveredNodeId = $state<string | null>(null);
+	// Active hover highlighting state
+	let hoveredNodeId = $state<string | null>(null);
 
-  async function initKonva() {
-    if (!containerDiv) return;
+	async function initKonva() {
+		if (!containerDiv) return;
 
-    const { default: Konva } = await import('konva');
-    KonvaModule = Konva;
+		const { default: Konva } = await import('konva');
+		KonvaModule = Konva;
 
-    stage = new Konva.Stage({
-      container: containerDiv,
-      width: containerDiv.clientWidth || 800,
-      height: 600
-    });
+		stage = new Konva.Stage({
+			container: containerDiv,
+			width: containerDiv.clientWidth || 800,
+			height: 600
+		});
 
-    const bgLayer = new Konva.Layer();
-    const gridLayer = new Konva.Layer();
-    interactionLayer = new Konva.Layer();
+		const bgLayer = new Konva.Layer();
+		const gridLayer = new Konva.Layer();
+		interactionLayer = new Konva.Layer();
 
-    stage.add(bgLayer);
-    stage.add(gridLayer);
-    stage.add(interactionLayer);
+		stage.add(bgLayer);
+		stage.add(gridLayer);
+		stage.add(interactionLayer);
 
-    if (solutionData) {
-      renderStaticTopology();
-    }
-  }
+		if (solutionData) {
+			renderStaticTopology();
+		}
+	}
 
-  function renderStaticTopology() {
-    if (!stage || !solutionData || !KonvaModule) return;
+	function renderStaticTopology() {
+		if (!stage || !solutionData || !KonvaModule) return;
 
-    interactionLayer.destroyChildren();
+		interactionLayer.destroyChildren();
 
-    const width = stage.width();
-    const height = stage.height();
-    const PAD = 50;
+		const width = stage.width();
+		const height = stage.height();
+		const PAD = 50;
 
-    // const scaleX = (x: number) => PAD + x * (width - PAD * 2);
-    // const scaleY = (y: number) => PAD + y * (height - PAD * 2);
+		// const scaleX = (x: number) => PAD + x * (width - PAD * 2);
+		// const scaleY = (y: number) => PAD + y * (height - PAD * 2);
 
-    const connectedEdges = solutionData.edges;
-    const connectedNodes = solutionData.nodes;
-    if (connectedNodes.length === 0) return;
+		const connectedEdges = solutionData.edges;
+		const connectedNodes = solutionData.nodes;
+		if (connectedNodes.length === 0) return;
 
-    // 1. Find the absolute bounding limits of the source data
-    const xValues = connectedNodes.map(n => n.x);
-    const yValues = connectedNodes.map(n => n.y);
+		// 1. Find the absolute bounding limits of the source data
+		const xValues = connectedNodes.map((n) => n.x);
+		const yValues = connectedNodes.map((n) => n.y);
 
-    const minX = Math.min(...xValues);
-    const maxX = Math.max(...xValues);
-    const minY = Math.min(...yValues);
-    const maxY = Math.max(...yValues);
+		const minX = Math.min(...xValues);
+		const maxX = Math.max(...xValues);
+		const minY = Math.min(...yValues);
+		const maxY = Math.max(...yValues);
 
-    // Prevent division by zero if all nodes share the same coordinate axis
-    const deltaX = (maxX - minX) || 1;
-    const deltaY = (maxY - minY) || 1;
+		// Prevent division by zero if all nodes share the same coordinate axis
+		const deltaX = maxX - minX || 1;
+		const deltaY = maxY - minY || 1;
 
-    // Define the dynamic normalization and scale transform pipelines
-    const scaleX = (rawX: number) => {
-      const normalized = (rawX - minX) / deltaX; // Maps raw value to [0.0, 1.0]
-      return PAD + normalized * (width - PAD * 2); // Maps ratio to canvas viewport pixels
-    };
+		// Define the dynamic normalization and scale transform pipelines
+		const scaleX = (rawX: number) => {
+			const normalized = (rawX - minX) / deltaX; // Maps raw value to [0.0, 1.0]
+			return PAD + normalized * (width - PAD * 2); // Maps ratio to canvas viewport pixels
+		};
 
-    const scaleY = (rawY: number) => {
-      const normalized = (rawY - minY) / deltaY; // Maps raw value to [0.0, 1.0]
-      return PAD + normalized * (height - PAD * 2); // Maps ratio to canvas viewport pixels
-    };
+		const scaleY = (rawY: number) => {
+			const normalized = (rawY - minY) / deltaY; // Maps raw value to [0.0, 1.0]
+			return PAD + normalized * (height - PAD * 2); // Maps ratio to canvas viewport pixels
+		};
 
-    // Find connected neighbors to help with highlighting logic later
+		// Find connected neighbors to help with highlighting logic later
 
+		const nodeById = Object.fromEntries(connectedNodes.map((n) => [n.id, n]));
+		// Draw Edges
+		for (const edge of connectedEdges) {
+			const fromNode = nodeById[edge.from];
+			const toNode = nodeById[edge.to];
 
-    const nodeById = Object.fromEntries(connectedNodes.map(n => [n.id, n]));
+			if (fromNode && toNode) {
+				const line = new KonvaModule.Line({
+					points: [scaleX(fromNode.x), scaleY(fromNode.y), scaleX(toNode.x), scaleY(toNode.y)],
+					stroke: '#cbd5e1',
+					strokeWidth: 2,
+					id: `edge-${edge.from}-${edge.to}`,
+					listening: true,
+					hitStrokeWidth: 10
+				});
 
-    // Draw Edges
-    for (const edge of connectedEdges) {
-      const fromNode = nodeById[edge.from];
-      const toNode = nodeById[edge.to];
+				// Mouse interactive triggers for detail presentation
+				line.on('mouseenter', (e: any) => {
+					hoveredNodeId = line.id;
+					tooltipText = `Edge: ${line.id()}\n${connectedNodes.find((n) => n.id == edge.from).label} - ${connectedNodes.find((n) => n.id == edge.to).label}`;
+					tooltipVisible = true;
 
-      if (fromNode && toNode) {
-        const line = new KonvaModule.Line({
-          points: [scaleX(fromNode.x), scaleY(fromNode.y), scaleX(toNode.x), scaleY(toNode.y)],
-          stroke: '#cbd5e1',
-          strokeWidth: 2,
-          id: `edge-${edge.from}-${edge.to}`,
-          listening: true,
-          hitStrokeWidth: 10
-        });
+					// Style feedback
+					line.stroke('#7b61ff');
+					line.strokeWidth(3);
+					document.body.style.cursor = 'pointer';
 
-        // Mouse interactive triggers for detail presentation
-        line.on('mouseenter', (e: any) => {
-          hoveredNodeId = line.id;
-          tooltipText = `Edge: ${line.id()}\n${connectedNodes[edge.from].label} - ${connectedNodes[edge.to].label}`;
-          tooltipVisible = true;
-          
-          // Style feedback
-          line.stroke('#7b61ff');
-          line.strokeWidth(3);
-          document.body.style.cursor = 'pointer';
-          
-          interactionLayer.batchDraw();
-        });
+					interactionLayer.batchDraw();
+				});
 
-        line.on('mousemove', () => {
-          const mousePos = stage.getPointerPosition();
-          if (mousePos) {
-            tooltipX = mousePos.x + 15;
-            tooltipY = mousePos.y + 15;
-          }
-        });
+				line.on('mousemove', () => {
+					const mousePos = stage.getPointerPosition();
+					if (mousePos) {
+						tooltipX = mousePos.x + 15;
+						tooltipY = mousePos.y + 15;
+					}
+				});
 
-        line.on('mouseleave', () => {
-          hoveredNodeId = null;
-          tooltipVisible = false;
-          
-          // Reset style feedback
-          line.stroke('#cbd5e1');
-          line.strokeWidth(2);
-          document.body.style.cursor = 'default';
-          
-          interactionLayer.batchDraw();
-        });
-        
-        interactionLayer.add(line);
-      }
-    }
+				line.on('mouseleave', () => {
+					hoveredNodeId = null;
+					tooltipVisible = false;
 
-    // Draw Nodes
-    for (const node of connectedNodes) {
-      const cx = scaleX(node.x);
-      const cy = scaleY(node.y);
+					// Reset style feedback
+					line.stroke('#cbd5e1');
+					line.strokeWidth(2);
+					document.body.style.cursor = 'default';
 
-      const circle = new KonvaModule.Circle({
-        x: cx,
-        y: cy,
-        radius: 10,
-        fill: node.color || '#64748b',
-        stroke: '#1e293b',
-        strokeWidth: 2,
-        id: `node-${node.id}`
-      });
+					interactionLayer.batchDraw();
+				});
 
-      // Mouse interactive triggers for detail presentation
-      circle.on('mouseenter', (e: any) => {
-        hoveredNodeId = node.id;
-        tooltipText = `Node: ${node.label || node.id}`;
-        tooltipVisible = true;
-        
-        // Style feedback
-        circle.stroke('#7b61ff');
-        circle.strokeWidth(3);
-        document.body.style.cursor = 'pointer';
-        
-        interactionLayer.batchDraw();
-      });
+				interactionLayer.add(line);
+			}
+		}
 
-      circle.on('mousemove', () => {
-        const mousePos = stage.getPointerPosition();
-        if (mousePos) {
-          tooltipX = mousePos.x + 15;
-          tooltipY = mousePos.y + 15;
-        }
-      });
+		// Draw Nodes
+		for (const node of connectedNodes) {
+			const cx = scaleX(node.x);
+			const cy = scaleY(node.y);
 
-      circle.on('mouseleave', () => {
-        hoveredNodeId = null;
-        tooltipVisible = false;
-        
-        // Reset style feedback
-        circle.stroke('#1e293b');
-        circle.strokeWidth(2);
-        document.body.style.cursor = 'default';
-        
-        interactionLayer.batchDraw();
-      });
+			const circle = new KonvaModule.Circle({
+				x: cx,
+				y: cy,
+				radius: 10,
+				fill: node.metadata.color || '#64748b',
+				stroke: '#1e293b',
+				strokeWidth: 2,
+				id: `node-${node.id}`
+			});
 
-      interactionLayer.add(circle);
-    }
+			// Mouse interactive triggers for detail presentation
+			circle.on('mouseenter', (e: any) => {
+				hoveredNodeId = node.id;
+				tooltipText = `Node: ${node.label || node.id}`;
+				tooltipVisible = true;
 
-    interactionLayer.batchDraw();
-  }
+				// Style feedback
+				circle.stroke('#7b61ff');
+				circle.strokeWidth(3);
+				document.body.style.cursor = 'pointer';
 
-  // Reactive redraw binding when dataset changes
-  $effect(() => {
-    if (solutionData && stage) {
-      renderStaticTopology();
-    }
-  });
+				interactionLayer.batchDraw();
+			});
 
-  onMount(() => {
-    initKonva();
-  });
+			circle.on('mousemove', () => {
+				const mousePos = stage.getPointerPosition();
+				if (mousePos) {
+					tooltipX = mousePos.x + 15;
+					tooltipY = mousePos.y + 15;
+				}
+			});
 
-  onDestroy(() => {
-    if (stage) {
-      stage.destroy();
-    }
-  });
+			circle.on('mouseleave', () => {
+				hoveredNodeId = null;
+				tooltipVisible = false;
+
+				// Reset style feedback
+				circle.stroke('#1e293b');
+				circle.strokeWidth(2);
+				document.body.style.cursor = 'default';
+
+				interactionLayer.batchDraw();
+			});
+
+			interactionLayer.add(circle);
+		}
+
+		interactionLayer.batchDraw();
+	}
+
+	// Reactive redraw binding when dataset changes
+	$effect(() => {
+		if (solutionData && stage) {
+			renderStaticTopology();
+		}
+	});
+
+	onMount(() => {
+		initKonva();
+	});
+
+	onDestroy(() => {
+		if (stage) {
+			stage.destroy();
+		}
+	});
 </script>
 
 <div class="canvas-container">
-  <div bind:this={containerDiv} class="canvas-viewport"></div>
+	<div bind:this={containerDiv} class="canvas-viewport"></div>
 
-  {#if tooltipVisible}
-    <div 
-      class="html-tooltip" 
-      style:left="{tooltipX}px" 
-      style:top="{tooltipY}px"
-    >
-      {tooltipText}
-    </div>
-  {/if}
+	{#if tooltipVisible}
+		<div class="html-tooltip" style:left="{tooltipX}px" style:top="{tooltipY}px">
+			{tooltipText}
+		</div>
+	{/if}
 </div>
 
 <style>
-  .canvas-container {
-    position: relative;
-    width: 100%;
-    height: 600px;
-  }
-  .canvas-viewport {
-    width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-  }
-  .html-tooltip {
-    position: absolute;
-    pointer-events: none;
-    background-color: #1e293b;
-    color: #f8fafc;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-family: monospace;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    z-index: 10;
-    white-space: pre-line;
-  }
+	.canvas-container {
+		position: relative;
+		width: 100%;
+		height: 600px;
+	}
+	.canvas-viewport {
+		width: 100%;
+		height: 100%;
+		background-color: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 4px;
+	}
+	.html-tooltip {
+		position: absolute;
+		pointer-events: none;
+		background-color: #1e293b;
+		color: #f8fafc;
+		padding: 6px 10px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-family: monospace;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+		z-index: 10;
+		white-space: pre-line;
+	}
 </style>

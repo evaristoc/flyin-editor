@@ -3,7 +3,7 @@
 	import { getSolutions, getSolution } from '$lib/api/solutions';
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	// import { getSolutionsList, getSolutionContent } from '$lib/api/solutions';
-	import { parseMapConfig } from '$lib/utils/mapParser';
+	import { parseMapConfig } from '$lib/services/mapParser';
 	import type { Graph } from '$lib/types/schema_types';
 
 	let fileNames = $state([]);
@@ -29,12 +29,9 @@
 	<aside class="sidebar">
 		<h2>Solutions</h2>
 		<ul>
-			{#each fileNames as name}
+			{#each fileNames as name (name)}
 				<li>
-					<button
-						on:click={() => loadSolution(name)}
-						class:active={selectedSolution?.name === name}
-					>
+					<button onclick={() => loadSolution(name)} class:active={selectedSolution?.name === name}>
 						{name}
 					</button>
 				</li>

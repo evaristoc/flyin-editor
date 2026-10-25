@@ -17,7 +17,7 @@ export default defineConfig({
                 runes: ({ filename }) =>
                     filename.split(/[/\\]/).includes('node_modules') ? undefined : true
             },
-            # TODO Keep this change as temporary for now; made to treat the txts as json
+            // TODO Keep this change as temporary for now; made to treat the txts as json
             name: 'raw-txt-loader',
             transform(code, id) {
                 if (id.endsWith('.txt')) {

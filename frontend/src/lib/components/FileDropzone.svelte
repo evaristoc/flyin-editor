@@ -70,7 +70,7 @@
 	}}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
-	ondrop={(event) => handleDrop(event)}
+	ondrop={handleDrop}
 	onclick={() => fileInput?.click()}
 	onkeydown={handleKeyDown}
 >

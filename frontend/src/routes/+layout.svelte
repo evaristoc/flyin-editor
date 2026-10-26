@@ -1,6 +1,20 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { setContext } from 'svelte';
+	import type { Graph } from '$lib/types/schema_types';
+
+	interface ParsedFileContext {
+		data: {
+			name: string;
+			nodes: unknown[];
+			edges: unknown[];
+			nb_drones: number;
+		} | null;
+		isConfirmed: boolean;
+		setParsedData: (data: Graph) => void;
+		confirmData: () => void;
+		clearData: () => void;
+	}
 
 	let parsedData = $state(null);
 	let isConfirmed = $state(false);
@@ -12,9 +26,11 @@
 		get isConfirmed() {
 			return isConfirmed;
 		},
-		setParsedData(newData) {
-			parsedData = newData;
-			isConfirmed = false;
+		setParsedData(newData: Graph) {
+			if (newData) {
+				parsedData = newData;
+				isConfirmed = false;
+			}
 		},
 		confirmData() {
 			isConfirmed = true;
@@ -25,7 +41,7 @@
 		}
 	};
 
-	setContext('parsedFileContext', dataStore);
+	setContext<ParsedFileContext>('parsedFileContext', dataStore);
 	let { children } = $props();
 </script>
 

@@ -8,10 +8,33 @@
 	function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		isDragging = false;
+		console.log();
 		const file = event.dataTransfer?.files[0];
-		if (file) {
-			processFile(file);
+		if (!file) {
+			alert(
+				`This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`
+			);
+			return;
 		}
+		processFile(file);
+	}
+
+	function handleDragLeave(event: DragEvent) {
+		const dropzone = event.currentTarget as HTMLElement;
+
+		if (event.relatedTarget instanceof Node && dropzone.contains(event.relatedTarget)) {
+			return;
+		}
+
+		isDragging = false;
+	}
+
+	function handleDragOver(event: DragEvent) {
+		event.preventDefault();
+		if (event.dataTransfer) {
+			event.dataTransfer.dropEffect = 'copy';
+		}
+		isDragging = true;
 	}
 
 	function handleFileSelect(event: Event) {
@@ -41,15 +64,13 @@
 	role="button"
 	tabindex="0"
 	aria-label="Drag and drop a map configuration text file here, or press Enter to browse files"
-	ondragover={(e) => {
+	ondragenter={(e) => {
 		e.preventDefault();
 		isDragging = true;
 	}}
-	ondragleave={(e) => {
-		e.preventDefault();
-		isDragging = false;
-	}}
-	ondrop={handleDrop}
+	ondragover={handleDragOver}
+	ondragleave={handleDragLeave}
+	ondrop={(event) => handleDrop(event)}
 	onclick={() => fileInput?.click()}
 	onkeydown={handleKeyDown}
 >
@@ -69,6 +90,9 @@
 		padding: 20px;
 		text-align: center;
 		cursor: pointer;
+	}
+	.dropzone * {
+		pointer-events: none;
 	}
 	.dragging {
 		border-color: #000;

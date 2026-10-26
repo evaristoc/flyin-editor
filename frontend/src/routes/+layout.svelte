@@ -51,6 +51,7 @@
 <nav>
 	<a href="/">home</a>
 	<a href="/graph">graph</a>
+	<a href="/fileloader">fileloader</a>
 </nav>
 
 {@render children()}

@@ -52,6 +52,27 @@ export interface Graph {
     edges: ZoneEdge[];
 }
 
+export interface UploadedFile {
+    id: string;
+    name: string;
+    rawText: string;
+    parsedData: any;
+}
+
+export interface ParsedFileContext {
+    data: {
+        name: string;
+        nodes: unknown[];
+        edges: unknown[];
+        nb_drones: number;
+    } | null;
+    rawFileText: string;
+    isConfirmed: boolean;
+    setParsedData: (data: Graph) => void;
+    confirmData: () => void;
+    clearData: () => void;
+}
+
 // export interface ParsedTopology {
 //     nb_drones: number;
 //     nodes: ZoneNode[];

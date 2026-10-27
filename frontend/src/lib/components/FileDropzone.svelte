@@ -1,31 +1,42 @@
 <script lang="ts">
-	let { onFileLoaded = () => {} }: { onFileLoaded?: (text: string, filename: string) => void } =
-		$props();
+	import { validateConfigFile } from '$lib/utils/validFile';
+	import { isValidationError } from '@sveltejs/kit';
 
+	let {
+		rawFileText = '',
+		onFileLoaded = () => {}
+	}: { onFileLoaded?: (text: string, filename: string) => void } = $props();
+	let errorMessage = $state('');
 	let isDragging = $state(false);
 	let fileInput: HTMLInputElement;
 
 	function handleDrop(event: DragEvent) {
 		event.preventDefault();
+		errorMessage = '';
 		isDragging = false;
-		console.log();
-		const file = event.dataTransfer?.files[0];
-		if (!file) {
-			alert(
-				`This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`
-			);
+		if (event.dataTransfer?.files[0] != undefined) {
+			if (!validateConfigFile(event.dataTransfer?.files[0]).valid) {
+				errorMessage = isValidationError.error || 'Invalid file selected.';
+				// alert(errorMessage);
+				return;
+			}
+		}
+		const afile = event.dataTransfer?.files[0];
+		if (!afile) {
+			// alert(
+			// 	`This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`
+			// );
+			errorMessage = `This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`;
 			return;
 		}
-		processFile(file);
+		processFile(afile);
 	}
 
 	function handleDragLeave(event: DragEvent) {
 		const dropzone = event.currentTarget as HTMLElement;
-
 		if (event.relatedTarget instanceof Node && dropzone.contains(event.relatedTarget)) {
 			return;
 		}
-
 		isDragging = false;
 	}
 
@@ -38,16 +49,37 @@
 	}
 
 	function handleFileSelect(event: Event) {
+		errorMessage = '';
 		const input = event.target as HTMLInputElement;
-		const file = input.files?.[0];
-		if (file) {
-			processFile(file);
+		if (input.files?.[0] != undefined) {
+			if (!validateConfigFile(input.files?.[0]).valid) {
+				errorMessage = isValidationError.error || 'Invalid file selected.';
+				// alert(errorMessage);
+				return;
+			}
 		}
+		const file = input.files?.[0];
+		if (!file) {
+			// alert(
+			// 	`This file shows as empty.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`
+			// );
+			errorMessage = `This file shows as empty.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`;
+			return;
+		}
+		processFile(file);
 	}
 
 	async function processFile(file: File) {
-		const text = await file.text();
-		onFileLoaded(text, file.name);
+		errorMessage = '';
+		try {
+			const text = await file.text();
+			rawFileText = text;
+			onFileLoaded(text, file.name);
+		} catch {
+			errorMessage = 'Failed to read file contents.\n\nThe file might be corrupted or unreadable.';
+			// alert(errorMessage);
+			return;
+		}
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -74,14 +106,20 @@
 	onclick={() => fileInput?.click()}
 	onkeydown={handleKeyDown}
 >
-	<p>Drag and drop a map config file here, or click to select</p>
-	<input
-		bind:this={fileInput}
-		type="file"
-		accept=".txt"
-		onchange={handleFileSelect}
-		style="display: none;"
-	/>
+	{#if !errorMessage}
+		<p>Drag and drop a map config file here, or click to select</p>
+		<input
+			bind:this={fileInput}
+			type="file"
+			accept=".txt"
+			onchange={handleFileSelect}
+			style="display: none;"
+		/>
+	{:else}
+		<div class="dropzone-error">
+			<p>{errorMessage}</p>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -97,5 +135,14 @@
 	.dragging {
 		border-color: #000;
 		background: #f9f9f9;
+	}
+	.dropzone-error {
+		margin-top: 10px;
+		padding: 8px 12px;
+		background-color: #fdf2f2;
+		border: 1px solid #f8b4b4;
+		color: #9b1c1c;
+		border-radius: 4px;
+		font-size: 14px;
 	}
 </style>

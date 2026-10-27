@@ -1,27 +1,18 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { setContext } from 'svelte';
-	import type { Graph } from '$lib/types/schema_types';
-
-	interface ParsedFileContext {
-		data: {
-			name: string;
-			nodes: unknown[];
-			edges: unknown[];
-			nb_drones: number;
-		} | null;
-		isConfirmed: boolean;
-		setParsedData: (data: Graph) => void;
-		confirmData: () => void;
-		clearData: () => void;
-	}
+	import type { Graph, ParsedFileContext } from '$lib/types/schema_types';
 
 	let parsedData = $state(null);
+	let configFile = $state('');
 	let isConfirmed = $state(false);
 
 	const dataStore = {
 		get data() {
 			return parsedData;
+		},
+		get configFileView() {
+			return configFile;
 		},
 		get isConfirmed() {
 			return isConfirmed;
@@ -30,6 +21,11 @@
 			if (newData) {
 				parsedData = newData;
 				isConfirmed = false;
+			}
+		},
+		setConfigFile(newConfig: string) {
+			if (newConfig) {
+				configFile = newConfig;
 			}
 		},
 		confirmData() {
@@ -48,10 +44,5 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
-<nav>
-	<a href="/">home</a>
-	<a href="/graph">graph</a>
-	<a href="/fileloader">fileloader</a>
-</nav>
 
 {@render children()}

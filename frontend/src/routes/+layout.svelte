@@ -1,38 +1,48 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { setContext } from 'svelte';
-	import type { Graph, ParsedFileContext } from '$lib/types/schema_types';
+	import { buildGraphFromRecords } from '$lib/services/buildGraph';
+	import { parseToLineRecords } from '$lib/services/configParser';
+	import type { LineRecord, ParsedFileContext } from '$lib/types/schema_types';
 
-	let parsedData = $state(null);
-	let configFile = $state('');
+	let lines = $state<LineRecord[]>([]);
 	let isConfirmed = $state(false);
 
 	const dataStore = {
+		get lines() {
+			return lines;
+		},
 		get data() {
-			return parsedData;
+			// Automatically project the graph from lines
+			return buildGraphFromRecords(lines, 'current_map');
 		},
 		get configFileView() {
-			return configFile;
+			// Reconstruct raw text from the line records array
+			return lines.map((r) => r.raw).join('\n');
 		},
 		get isConfirmed() {
 			return isConfirmed;
 		},
-		setParsedData(newData: Graph) {
-			if (newData) {
-				parsedData = newData;
-				isConfirmed = false;
-			}
+		setRawText(rawText: string) {
+			lines = parseToLineRecords(rawText);
+			isConfirmed = true;
 		},
-		setConfigFile(newConfig: string) {
-			if (newConfig) {
-				configFile = newConfig;
-			}
+		updateLineText(index: number, newRaw: string) {
+			// Target specific line index and re-parse just that entry or run pipeline
+			const updatedRawLines = [...lines];
+			updatedRawLines[index] = {
+				...updatedRawLines[index],
+				raw: newRaw
+			};
+			// Re-run parser or update specific record
+			lines = parseToLineRecords(updatedRawLines.map((r) => r.raw).join('\n'));
+			isConfirmed = false;
 		},
 		confirmData() {
 			isConfirmed = true;
 		},
 		clearData() {
-			parsedData = null;
+			lines = [];
 			isConfirmed = false;
 		}
 	};

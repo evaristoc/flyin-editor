@@ -3,10 +3,10 @@
 	import type { ParsedFileContext } from '$lib/types/schema_types';
 
 	const dataStore = getContext<ParsedFileContext>('parsedFileContext');
-	let lines = $derived(dataStore?.configFileView ? dataStore.configFileView.split(/\r?\n/) : []);
+	let lines = $derived(dataStore?.lines || []);
 </script>
 
-{#if dataStore?.configFileView}
+{#if lines}
 	<div class="viewer-container">
 		<h3>Configuration Text View</h3>
 		<pre class="config-display">
@@ -15,7 +15,7 @@
                     {#each lines as line, index (index)}
 						<tr data-line-number={index + 1}>
                             <td class="line-number">{index + 1}</td>
-                            <td class="line-content"><code>{line}</code></td>
+                            <td class="line-content"><code>{line.raw}</code></td>
                         </tr>
 					{/each}
                 </tbody>

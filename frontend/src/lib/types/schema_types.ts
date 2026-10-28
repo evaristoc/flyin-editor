@@ -59,19 +59,44 @@ export interface UploadedFile {
     parsedData: any;
 }
 
+// export interface ParsedFileContext {
+//     data: {
+//         name: string;
+//         nodes: unknown[];
+//         edges: unknown[];
+//         nb_drones: number;
+//     } | null;
+//     rawFileText: string;
+//     isConfirmed: boolean;
+//     setParsedData: (data: Graph) => void;
+//     confirmData: () => void;
+//     clearData: () => void;
+// }
+
+export interface LineRecord {
+    index: number;        // 0-based position (the ID)
+    raw: string;          // Verbatim text of the line
+    type: 'zone' | 'connection' | 'nb_drones' | 'comment' | 'empty' | 'malformed';
+    entity?: ZoneNode | ZoneEdge | number; // The structured object extracted by the parser
+    diagnostic?: string;  // Error message if flagged by the Diagnostic Gate
+}
+
+// export interface ParseResult {
+//     lines: LineRecord[];
+//     graph: Graph;
+// }
+
 export interface ParsedFileContext {
-    data: {
-        name: string;
-        nodes: unknown[];
-        edges: unknown[];
-        nb_drones: number;
-    } | null;
+    lines: LineRecord[];
+    data: Graph | null;
     rawFileText: string;
     isConfirmed: boolean;
-    setParsedData: (data: Graph) => void;
+    updateLineText: (index: number, newRaw: string) => void;
+    setRawText: (rawText: string) => void;
     confirmData: () => void;
     clearData: () => void;
 }
+
 
 // export interface ParsedTopology {
 //     nb_drones: number;

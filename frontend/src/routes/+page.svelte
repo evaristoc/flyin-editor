@@ -2,17 +2,14 @@
 	import FileDropzone from '$lib/components/FileDropzone.svelte';
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
-	import { parseMapConfig } from '$lib/services/mapParser';
 	import { getContext } from 'svelte';
-	import type { Graph } from '$lib/types/schema_types';
+	import type { ParsedFileContext } from '$lib/types/schema_types';
 
-	const dataStore = getContext('parsedFileContext');
+	const dataStore: ParsedFileContext = getContext('parsedFileContext');
+	console.log(dataStore.isConfirmed);
 	function handleFileLoaded(text: string, filename: string) {
 		try {
-			dataStore.setConfigFile(text);
-			const parsed: Graph = parseMapConfig(text, filename);
-			dataStore.setParsedData(parsed);
-			// parsedGraph = dataStore.data;
+			dataStore.setRawText(text);
 		} catch (error) {
 			console.error('Failed to parse map configuration:', error);
 		}
@@ -22,27 +19,13 @@
 <main class="fileload-container">
 	<h1>Load Map Configuration</h1>
 
-	{#if !dataStore.data}
+	{#if !dataStore.isConfirmed}
 		<p>Drop your configuration text file below to begin.</p>
 		<FileDropzone onFileLoaded={handleFileLoaded} />
 	{:else}
-		{#if !dataStore.isConfirmed}
-			<div class="result-view">
-				<h2>Successfully Loaded: {dataStore.data.name}</h2>
-				<p>
-					Nodes: {dataStore.data.nodes.length} | Edges: {dataStore.data.edges.length} | Drones: {dataStore
-						.data.nb_drones}
-				</p>
-				<button onclick={() => dataStore.confirmData()}>Confirm and Render Graph</button>
-			</div>
-		{:else}
-			<h2>Graph Visualization</h2>
-			<GraphRenderer solutionData={dataStore.data} />
-			<ConfigEditor />
-		{/if}
-		<div>
-			<button onclick={() => dataStore.clearData()}>Load Another File</button>
-		</div>
+		<h2>Graph Visualization</h2>
+		<GraphRenderer solutionData={dataStore.data} />
+		<ConfigEditor />
 	{/if}
 </main>
 

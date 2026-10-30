@@ -85,7 +85,7 @@
 
 		// Find connected neighbors to help with highlighting logic later
 
-		const nodeById = Object.fromEntries(connectedNodes.map((n) => [n.id, n]));
+		const nodeById = Object.fromEntries(connectedNodes.map((n) => [n.entityId, n]));
 		// Draw Edges
 		for (const edge of connectedEdges) {
 			const fromNode = nodeById[edge.from];
@@ -96,15 +96,18 @@
 					points: [scaleX(fromNode.x), scaleY(fromNode.y), scaleX(toNode.x), scaleY(toNode.y)],
 					stroke: '#cbd5e1',
 					strokeWidth: 2,
-					id: `edge-${edge.from}-${edge.to}`,
+					id: edge.uuid,
 					listening: true,
-					hitStrokeWidth: 10
+					hitStrokeWidth: 10,
+					attrs: {
+						entityId: `edge-${edge.from}-${edge.to}`
+					}
 				});
 
 				// Mouse interactive triggers for detail presentation
 				line.on('mouseenter', (e: any) => {
-					hoveredNodeId = line.id;
-					tooltipText = `Edge: ${line.id()}\n${connectedNodes.find((n) => n.id == edge.from).label} - ${connectedNodes.find((n) => n.id == edge.to).label}`;
+					hoveredNodeId = line.uuid;
+					tooltipText = `Edge: ${line.getAttr('entityId')}\n${connectedNodes.find((n) => n.entityId == edge.from).label}-${connectedNodes.find((n) => n.entityId == edge.to).label}`;
 					tooltipVisible = true;
 
 					// Style feedback
@@ -151,13 +154,16 @@
 				fill: node.metadata.color || '#64748b',
 				stroke: '#1e293b',
 				strokeWidth: 2,
-				id: `node-${node.id}`
+				id: node.uuid,
+				attrs: {
+					entityId: `node-${node.entityId}`
+				}
 			});
 
 			// Mouse interactive triggers for detail presentation
 			circle.on('mouseenter', (e: any) => {
-				hoveredNodeId = node.id;
-				tooltipText = `Node: ${node.label || node.id}`;
+				hoveredNodeId = node.uuid;
+				tooltipText = `Node: ${node.label || node.getAttr('entityId')}`;
 				tooltipVisible = true;
 
 				// Style feedback

@@ -2,7 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { setContext } from 'svelte';
 	import { buildGraphFromRecords } from '$lib/services/buildGraph';
-	import { parseToLineRecords } from '$lib/services/configParser';
+	import { parseSingleLine, parseToLineRecords } from '$lib/services/configParser';
 	import type { LineRecord, ParsedFileContext } from '$lib/types/schema_types';
 
 	let lines = $state<LineRecord[]>([]);
@@ -27,16 +27,16 @@
 			lines = parseToLineRecords(rawText);
 			isConfirmed = true;
 		},
-		updateLineText(index: number, newRaw: string) {
+		updateLine(modifiedRecord: LineRecord) {
 			// Target specific line index and re-parse just that entry or run pipeline
-			const updatedRawLines = [...lines];
-			updatedRawLines[index] = {
-				...updatedRawLines[index],
-				raw: newRaw
-			};
-			// Re-run parser or update specific record
-			lines = parseToLineRecords(updatedRawLines.map((r) => r.raw).join('\n'));
-			isConfirmed = false;
+			const index = lines.findIndex((item) => item.uuid === modifiedRecord.uuid);
+			// TODO it should be null or one value only: check later!
+			if (index === -1) return;
+			lines[index] = modifiedRecord;
+		},
+		addLine(newRecord: LineRecord) {
+			// Collect current raw strings plus the new one
+			lines = [...lines, newRecord];
 		},
 		confirmData() {
 			isConfirmed = true;

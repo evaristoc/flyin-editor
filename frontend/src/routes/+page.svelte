@@ -6,7 +6,6 @@
 	import type { ParsedFileContext } from '$lib/types/schema_types';
 
 	const dataStore: ParsedFileContext = getContext('parsedFileContext');
-	console.log(dataStore.isConfirmed);
 	function handleFileLoaded(text: string, filename: string) {
 		try {
 			dataStore.setRawText(text);

@@ -26,7 +26,8 @@ export interface ZoneMetadata {
 }
 
 export interface ZoneNode {
-    id: string;
+    uuid: string;
+    entityId: string;
     label: string;
     type: 'start_hub' | 'end_hub' | 'hub';
     x: number;
@@ -39,7 +40,8 @@ export interface EdgeMetadata {
 }
 
 export interface ZoneEdge {
-    id: string;
+    uuid: string;
+    entityId: string;
     from: string; //uuid of node 1
     to: string; // uuid of node 2
     metadata: EdgeMetadata;
@@ -74,7 +76,7 @@ export interface UploadedFile {
 // }
 
 export interface LineRecord {
-    index: number;        // 0-based position (the ID)
+    uuid: string;
     raw: string;          // Verbatim text of the line
     type: 'zone' | 'connection' | 'nb_drones' | 'comment' | 'empty' | 'malformed';
     entity?: ZoneNode | ZoneEdge | number; // The structured object extracted by the parser
@@ -91,7 +93,8 @@ export interface ParsedFileContext {
     data: Graph | null;
     rawFileText: string;
     isConfirmed: boolean;
-    updateLineText: (index: number, newRaw: string) => void;
+    updateLine: (modifiedRecord: LineRecord) => void;
+    addLine: (newRecord: LineRecord) => void;
     setRawText: (rawText: string) => void;
     confirmData: () => void;
     clearData: () => void;

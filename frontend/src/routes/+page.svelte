@@ -23,7 +23,7 @@
 		<FileDropzone onFileLoaded={handleFileLoaded} />
 	{:else}
 		<h2>Graph Visualization</h2>
-		<GraphRenderer solutionData={dataStore.data} />
+		<GraphRenderer />
 		<ConfigEditor />
 	{/if}
 </main>

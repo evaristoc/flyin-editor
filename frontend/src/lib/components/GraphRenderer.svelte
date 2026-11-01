@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import type { Graph, ZoneEdge, ZoneNode } from '$lib/types/schema_types';
+	import type { ParsedFileContext } from '$lib/types/schema_types';
+	import type { Graph } from '$lib/types/schema_types';
 
-	let { solutionData = null } = $props<{ solutionData: Graph | null }>();
+	let dataStore = getContext<ParsedFileContext>('parsedFileContext');
+	const solutionData: Graph | null = $derived(dataStore.data);
 
 	let containerDiv: HTMLDivElement;
 	let KonvaModule: any = null;
@@ -17,27 +20,43 @@
 
 	// Active hover highlighting state
 	let hoveredNodeId = $state<string | null>(null);
+	// const isHovered = $derived(dataStore.hoveredUuid !== null);
+	// const isSelected = $derived(dataStore.selectedUuid !== null);
+	// const fillSelColor = $derived(isHovered ? '#ff6b6b' : isSelected ? '#4dabf7' : '#adb5bd');
 
+	$effect(() => {
+		const hovered = dataStore.hoveredUuid;
+		const selected = dataStore.selectedUuid;
+		if (!interactionLayer) return;
+		// Reset styles or query directly by ID
+		interactionLayer.find('Shape').forEach((shape) => {
+			const id = shape.id();
+			if (!id) return;
+			if (id === selected) {
+				shape.stroke('#000000'); // selected edge color
+			} else if (id === hovered) {
+				shape.stroke('#ff6b6b'); // hovered edge color
+			} else {
+				shape.stroke('#cbd5e1'); // hovered node color
+			}
+		});
+		interactionLayer.batchDraw();
+	});
 	async function initKonva() {
 		if (!containerDiv) return;
-
 		const { default: Konva } = await import('konva');
 		KonvaModule = Konva;
-
 		stage = new Konva.Stage({
 			container: containerDiv,
 			width: containerDiv.clientWidth || 800,
 			height: 600
 		});
-
 		const bgLayer = new Konva.Layer();
 		const gridLayer = new Konva.Layer();
 		interactionLayer = new Konva.Layer();
-
 		stage.add(bgLayer);
 		stage.add(gridLayer);
 		stage.add(interactionLayer);
-
 		if (solutionData) {
 			renderStaticTopology();
 		}
@@ -146,7 +165,6 @@
 		for (const node of connectedNodes) {
 			const cx = scaleX(node.x);
 			const cy = scaleY(node.y);
-
 			const circle = new KonvaModule.Circle({
 				x: cx,
 				y: cy,

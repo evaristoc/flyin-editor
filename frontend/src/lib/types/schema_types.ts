@@ -93,8 +93,13 @@ export interface ParsedFileContext {
     data: Graph | null;
     rawFileText: string;
     isConfirmed: boolean;
+    hoveredUuid: string | null;
+    selectedUuid: string | null;
     updateLine: (modifiedRecord: LineRecord) => void;
     addLine: (newRecord: LineRecord) => void;
+    moveLine: (sourceUuid: string, targetUuid: string) => void;
+    setHovered: (uuid: string | null) => void;
+    setSeleted: (uuid: string | null) => void;
     setRawText: (rawText: string) => void;
     confirmData: () => void;
     clearData: () => void;

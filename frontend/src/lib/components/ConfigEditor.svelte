@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import AddLineRecord from './AddLineRecord.svelte';
+	import TableRow from './TableRow.svelte';
 	import type { ParsedFileContext, LineRecord } from '$lib/types/schema_types';
 
 	const dataStore = getContext<ParsedFileContext>('parsedFileContext');
 	let lines = $derived(dataStore?.lines || []);
 	let isAdding: boolean = $state(false);
+	// let errorMessage: string = $state('');
 	let isUuidEditing = $state<string | null>(null);
+	let isDragging: boolean = $state(false);
+
 	function handleAddRecord(newRecord: LineRecord) {
 		dataStore.addLine(newRecord);
 		// // Test verification logs
@@ -14,12 +18,10 @@
 		// console.log('Complete lines store:', dataStore.lines);
 		isAdding = false;
 	}
+
 	function isEdit(e: MouseEvent, uuid: string) {
 		e.preventDefault();
 		isUuidEditing = uuid;
-	}
-	function handleEditRecord(modifiedRecord: LineRecord) {
-		dataStore.updateLine(modifiedRecord);
 	}
 
 	// // Test verification logs
@@ -34,21 +36,7 @@
             <table class="config-table">
                 <tbody>
                     {#each lines as line, index (line.uuid)}
-						<tr data-line-number={index + 1}>
-                            <td class="line-number">{index + 1}</td>
-                            <td class="line-content">
-                                {#if isUuidEditing === line.uuid}
-									<AddLineRecord
-										currentText={line.raw}
-										uuid={line.uuid}
-										onAdd={handleEditRecord}
-										onCancel={() => (isUuidEditing = null)}
-									/>
-								{:else}
-									<code ondblclick={(e) => isEdit(e, line.uuid)}>{line.raw}</code>
-								{/if}
-                            </td>
-                        </tr>
+						<TableRow {isUuidEditing} {index} {line} {isEdit} />
 					{/each}
                     {#if isAdding}
 						<AddLineRecord
@@ -88,43 +76,10 @@
 		text-align: left;
 	}
 
-	.line-number {
-		user-select: none;
-		color: #94a3b8;
-		text-align: right;
-		padding-right: 16px;
-		min-width: 30px;
-		border-right: 1px solid #e2e8f0;
-		margin-right: 12px;
-	}
-
 	.config-table {
 		width: 100%;
 		border-collapse: collapse;
 		font-family: monospace;
 		font-size: 14px;
-	}
-
-	tr:hover {
-		background-color: #f1f5f9;
-	}
-
-	.line-number {
-		user-select: none;
-		color: #94a3b8;
-		text-align: right;
-		padding: 2px 16px 2px 12px;
-		width: 1%;
-		white-space: nowrap;
-		border-right: 1px solid #e2e8f0;
-		vertical-align: top;
-	}
-
-	.line-content {
-		padding: 2px 12px;
-		white-space: pre-wrap;
-		word-break: break-all;
-		vertical-align: top;
-		white-space: nowrap;
 	}
 </style>

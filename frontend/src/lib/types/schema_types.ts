@@ -26,7 +26,8 @@ export interface ZoneMetadata {
 }
 
 export interface ZoneNode {
-    id: string;
+    uuid: string;
+    entityId: string;
     label: string;
     type: 'start_hub' | 'end_hub' | 'hub';
     x: number;
@@ -39,7 +40,8 @@ export interface EdgeMetadata {
 }
 
 export interface ZoneEdge {
-    id: string;
+    uuid: string;
+    entityId: string;
     from: string; //uuid of node 1
     to: string; // uuid of node 2
     metadata: EdgeMetadata;
@@ -59,19 +61,50 @@ export interface UploadedFile {
     parsedData: any;
 }
 
+// export interface ParsedFileContext {
+//     data: {
+//         name: string;
+//         nodes: unknown[];
+//         edges: unknown[];
+//         nb_drones: number;
+//     } | null;
+//     rawFileText: string;
+//     isConfirmed: boolean;
+//     setParsedData: (data: Graph) => void;
+//     confirmData: () => void;
+//     clearData: () => void;
+// }
+
+export interface LineRecord {
+    uuid: string;
+    raw: string;          // Verbatim text of the line
+    type: 'zone' | 'connection' | 'nb_drones' | 'comment' | 'empty' | 'malformed';
+    entity?: ZoneNode | ZoneEdge | number; // The structured object extracted by the parser
+    diagnostic?: string;  // Error message if flagged by the Diagnostic Gate
+}
+
+// export interface ParseResult {
+//     lines: LineRecord[];
+//     graph: Graph;
+// }
+
 export interface ParsedFileContext {
-    data: {
-        name: string;
-        nodes: unknown[];
-        edges: unknown[];
-        nb_drones: number;
-    } | null;
+    lines: LineRecord[];
+    data: Graph | null;
     rawFileText: string;
     isConfirmed: boolean;
-    setParsedData: (data: Graph) => void;
+    hoveredUuid: string | null;
+    selectedUuid: string | null;
+    updateLine: (modifiedRecord: LineRecord) => void;
+    addLine: (newRecord: LineRecord) => void;
+    moveLine: (sourceUuid: string, targetUuid: string) => void;
+    setHovered: (uuid: string | null) => void;
+    setSeleted: (uuid: string | null) => void;
+    setRawText: (rawText: string) => void;
     confirmData: () => void;
     clearData: () => void;
 }
+
 
 // export interface ParsedTopology {
 //     nb_drones: number;

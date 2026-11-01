@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import type { Graph, ZoneEdge, ZoneNode } from '$lib/types/schema_types';
+	import type { ParsedFileContext } from '$lib/types/schema_types';
+	import type { Graph } from '$lib/types/schema_types';
 
-	let { solutionData = null } = $props<{ solutionData: Graph | null }>();
+	let dataStore = getContext<ParsedFileContext>('parsedFileContext');
+	const solutionData: Graph | null = $derived(dataStore.data);
 
 	let containerDiv: HTMLDivElement;
 	let KonvaModule: any = null;
@@ -17,27 +20,43 @@
 
 	// Active hover highlighting state
 	let hoveredNodeId = $state<string | null>(null);
+	// const isHovered = $derived(dataStore.hoveredUuid !== null);
+	// const isSelected = $derived(dataStore.selectedUuid !== null);
+	// const fillSelColor = $derived(isHovered ? '#ff6b6b' : isSelected ? '#4dabf7' : '#adb5bd');
 
+	$effect(() => {
+		const hovered = dataStore.hoveredUuid;
+		const selected = dataStore.selectedUuid;
+		if (!interactionLayer) return;
+		// Reset styles or query directly by ID
+		interactionLayer.find('Shape').forEach((shape) => {
+			const id = shape.id();
+			if (!id) return;
+			if (id === selected) {
+				shape.stroke('#000000'); // selected edge color
+			} else if (id === hovered) {
+				shape.stroke('#ff6b6b'); // hovered edge color
+			} else {
+				shape.stroke('#cbd5e1'); // hovered node color
+			}
+		});
+		interactionLayer.batchDraw();
+	});
 	async function initKonva() {
 		if (!containerDiv) return;
-
 		const { default: Konva } = await import('konva');
 		KonvaModule = Konva;
-
 		stage = new Konva.Stage({
 			container: containerDiv,
 			width: containerDiv.clientWidth || 800,
 			height: 600
 		});
-
 		const bgLayer = new Konva.Layer();
 		const gridLayer = new Konva.Layer();
 		interactionLayer = new Konva.Layer();
-
 		stage.add(bgLayer);
 		stage.add(gridLayer);
 		stage.add(interactionLayer);
-
 		if (solutionData) {
 			renderStaticTopology();
 		}
@@ -85,7 +104,7 @@
 
 		// Find connected neighbors to help with highlighting logic later
 
-		const nodeById = Object.fromEntries(connectedNodes.map((n) => [n.id, n]));
+		const nodeById = Object.fromEntries(connectedNodes.map((n) => [n.entityId, n]));
 		// Draw Edges
 		for (const edge of connectedEdges) {
 			const fromNode = nodeById[edge.from];
@@ -96,15 +115,18 @@
 					points: [scaleX(fromNode.x), scaleY(fromNode.y), scaleX(toNode.x), scaleY(toNode.y)],
 					stroke: '#cbd5e1',
 					strokeWidth: 2,
-					id: `edge-${edge.from}-${edge.to}`,
+					id: edge.uuid,
 					listening: true,
-					hitStrokeWidth: 10
+					hitStrokeWidth: 10,
+					attrs: {
+						entityId: `edge-${edge.from}-${edge.to}`
+					}
 				});
 
 				// Mouse interactive triggers for detail presentation
 				line.on('mouseenter', (e: any) => {
-					hoveredNodeId = line.id;
-					tooltipText = `Edge: ${line.id()}\n${connectedNodes.find((n) => n.id == edge.from).label} - ${connectedNodes.find((n) => n.id == edge.to).label}`;
+					hoveredNodeId = line.uuid;
+					tooltipText = `Edge: ${line.getAttr('entityId')}\n${connectedNodes.find((n) => n.entityId == edge.from).label}-${connectedNodes.find((n) => n.entityId == edge.to).label}`;
 					tooltipVisible = true;
 
 					// Style feedback
@@ -143,7 +165,6 @@
 		for (const node of connectedNodes) {
 			const cx = scaleX(node.x);
 			const cy = scaleY(node.y);
-
 			const circle = new KonvaModule.Circle({
 				x: cx,
 				y: cy,
@@ -151,13 +172,16 @@
 				fill: node.metadata.color || '#64748b',
 				stroke: '#1e293b',
 				strokeWidth: 2,
-				id: `node-${node.id}`
+				id: node.uuid,
+				attrs: {
+					entityId: `node-${node.entityId}`
+				}
 			});
 
 			// Mouse interactive triggers for detail presentation
 			circle.on('mouseenter', (e: any) => {
-				hoveredNodeId = node.id;
-				tooltipText = `Node: ${node.label || node.id}`;
+				hoveredNodeId = node.uuid;
+				tooltipText = `Node: ${node.label || node.getAttr('entityId')}`;
 				tooltipVisible = true;
 
 				// Style feedback

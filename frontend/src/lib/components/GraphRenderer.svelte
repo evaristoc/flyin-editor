@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import type { ParsedFileContext } from '$lib/types/schema_types';
+	import type { RecordContext } from '$lib/types/schema_types';
 	import type { Graph } from '$lib/types/schema_types';
 
-	let dataStore = getContext<ParsedFileContext>('parsedFileContext');
+	let dataStore = getContext<RecordContext>('recordContext');
 	const solutionData: Graph | null = $derived(dataStore.data);
 
 	let containerDiv: HTMLDivElement;

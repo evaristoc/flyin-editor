@@ -61,7 +61,7 @@ export interface UploadedFile {
     parsedData: any;
 }
 
-// export interface ParsedFileContext {
+// export interface RecordContext {
 //     data: {
 //         name: string;
 //         nodes: unknown[];
@@ -88,21 +88,34 @@ export interface LineRecord {
 //     graph: Graph;
 // }
 
-export interface ParsedFileContext {
+export interface RecordContext {
+    fileid: string | null;
+    name: string | '';
     lines: LineRecord[];
     data: Graph | null;
-    rawFileText: string;
+    // rawFileText: string;
     isConfirmed: boolean;
     hoveredUuid: string | null;
     selectedUuid: string | null;
+    setName: (name: string) => void;
+    setFileId: (newfileid: string) => void;
     updateLine: (modifiedRecord: LineRecord) => void;
     addLine: (newRecord: LineRecord) => void;
     moveLine: (sourceUuid: string, targetUuid: string) => void;
     setHovered: (uuid: string | null) => void;
-    setSeleted: (uuid: string | null) => void;
+    setSelected: (uuid: string | null) => void;
     setRawText: (rawText: string) => void;
     confirmData: () => void;
     clearData: () => void;
+}
+
+export interface WorkspaceRegistry {
+    activeFileId: string | null;
+    activeFile: string | null;
+    contexts: Map<string, RecordContext>;
+    setActiveFile: (fileid: string) => void;
+    addContext: (recordcontext: RecordContext) => void;
+    removeContext: (fileid: string) => void;
 }
 
 

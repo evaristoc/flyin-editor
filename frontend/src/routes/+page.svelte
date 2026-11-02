@@ -3,9 +3,9 @@
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
 	import { getContext } from 'svelte';
-	import type { ParsedFileContext } from '$lib/types/schema_types';
+	import type { RecordContext } from '$lib/types/schema_types';
 
-	const dataStore: ParsedFileContext = getContext('parsedFileContext');
+	const dataStore: RecordContext = getContext('recordContext');
 	function handleFileLoaded(text: string, filename: string) {
 		try {
 			dataStore.setRawText(text);

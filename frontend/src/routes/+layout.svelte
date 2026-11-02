@@ -3,14 +3,54 @@
 	import { setContext } from 'svelte';
 	import { buildGraphFromRecords } from '$lib/services/buildGraph';
 	import { parseToLineRecords } from '$lib/services/configParser';
-	import type { LineRecord, ParsedFileContext } from '$lib/types/schema_types';
+	import type { LineRecord, RecordContext, WorkspaceRegistry } from '$lib/types/schema_types';
 
+	let fileIdState = $state<string | null>(null);
+	let nameState = $state<string>('');
 	let lines = $state<LineRecord[]>([]);
 	let isConfirmed = $state(false);
 	let hoveredUuid = $state<string | null>(null);
 	let selectedUuid = $state<string | null>(null);
+	let contexts = $state(new Map<string, RecordContext>());
+	// const REGISTRY_KEY = Symbol('WorkspaceRegistry');
 
-	const dataStore = {
+	const workSpace: WorkspaceRegistry = {
+		activeFileId: null,
+		get activeFile() {
+			return this.activeFileId;
+		},
+		get contexts() {
+			return contexts;
+		},
+		setActiveFile(fileid: string) {
+			if (contexts.has(fileid)) {
+				this.activeFileId = fileid;
+			}
+		},
+		addContext(recordcontext: RecordContext) {
+			if (!recordcontext.fileid) return;
+			contexts.set(recordcontext.fileid, recordcontext);
+			if (!this.activeFileId) {
+				this.activeFileId = recordcontext.fileid;
+			}
+		},
+
+		removeContext(fileid: string) {
+			contexts.delete(fileid);
+			if (this.activeFileId == fileid) {
+				const nextKey = contexts.keys().next().value;
+				this.activeFileId = nextKey || null;
+			}
+		}
+	};
+
+	const dataStore: RecordContext = {
+		get fileid() {
+			return fileIdState;
+		},
+		get name() {
+			return nameState;
+		},
 		get lines() {
 			return lines;
 		},
@@ -18,10 +58,10 @@
 			// Automatically project the graph from lines
 			return buildGraphFromRecords(lines, 'current_map');
 		},
-		get configFileView() {
-			// Reconstruct raw text from the line records array
-			return lines.map((r) => r.raw).join('\n');
-		},
+		// get configFileView() {
+		// 	// Reconstruct raw text from the line records array
+		// 	return lines.map((r) => r.raw).join('\n');
+		// },
 		get isConfirmed() {
 			return isConfirmed;
 		},
@@ -30,6 +70,12 @@
 		},
 		get selectedUuid() {
 			return selectedUuid;
+		},
+		setName(newname: string) {
+			nameState = newname;
+		},
+		setFileId(newfileid: string) {
+			fileIdState = newfileid;
 		},
 		setRawText(rawText: string) {
 			lines = parseToLineRecords(rawText);
@@ -76,7 +122,8 @@
 		}
 	};
 
-	setContext<ParsedFileContext>('parsedFileContext', dataStore);
+	setContext<RecordContext>('recordContext', dataStore);
+	setContext<WorkspaceRegistry>('workSpace', workSpace);
 	let { children } = $props();
 </script>
 

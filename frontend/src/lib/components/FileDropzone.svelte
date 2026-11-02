@@ -5,7 +5,7 @@
 	let {
 		rawFileText = '',
 		onFileLoaded = () => {}
-	}: { onFileLoaded?: (text: string, filename: string) => void } = $props();
+	}: { onFileLoaded?: (text: string, filename: string, fileid: string) => void } = $props();
 	let errorMessage = $state('');
 	let isDragging = $state(false);
 	let fileInput: HTMLInputElement;
@@ -21,15 +21,15 @@
 				return;
 			}
 		}
-		const afile = event.dataTransfer?.files[0];
-		if (!afile) {
+		const file = event.dataTransfer?.files[0];
+		if (!file) {
 			// alert(
 			// 	`This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`
 			// );
 			errorMessage = `This file shows as empty: ${event.dataTransfer?.getData('text/plain')}.\n\nYou might be trying to pass a reference, not an actual file.\n\nPlease try again from a different application (eg. Explorer). Exiting.`;
 			return;
 		}
-		processFile(afile);
+		processFile(file);
 	}
 
 	function handleDragLeave(event: DragEvent) {
@@ -72,9 +72,11 @@
 	async function processFile(file: File) {
 		errorMessage = '';
 		try {
+			const filename = file.name;
+			const fileid = crypto.randomUUID();
 			const text = await file.text();
 			rawFileText = text;
-			onFileLoaded(text, file.name);
+			onFileLoaded(text, filename, fileid);
 		} catch {
 			errorMessage = 'Failed to read file contents.\n\nThe file might be corrupted or unreadable.';
 			// alert(errorMessage);

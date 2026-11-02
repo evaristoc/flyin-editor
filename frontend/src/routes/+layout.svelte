@@ -15,31 +15,30 @@
 	// const REGISTRY_KEY = Symbol('WorkspaceRegistry');
 
 	const workSpace: WorkspaceRegistry = {
-		activeFileId: null,
 		get activeFile() {
-			return this.activeFileId;
+			return fileIdState;
 		},
 		get contexts() {
 			return contexts;
 		},
 		setActiveFile(fileid: string) {
 			if (contexts.has(fileid)) {
-				this.activeFileId = fileid;
+				fileIdState = fileid;
 			}
 		},
 		addContext(recordcontext: RecordContext) {
 			if (!recordcontext.fileid) return;
 			contexts.set(recordcontext.fileid, recordcontext);
-			if (!this.activeFileId) {
-				this.activeFileId = recordcontext.fileid;
+			if (fileIdState) {
+				fileIdState = recordcontext.fileid;
 			}
 		},
 
 		removeContext(fileid: string) {
 			contexts.delete(fileid);
-			if (this.activeFileId == fileid) {
+			if (fileIdState == fileid) {
 				const nextKey = contexts.keys().next().value;
-				this.activeFileId = nextKey || null;
+				fileIdState = nextKey || null;
 			}
 		}
 	};

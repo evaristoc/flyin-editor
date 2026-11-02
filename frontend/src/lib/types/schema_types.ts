@@ -110,7 +110,6 @@ export interface RecordContext {
 }
 
 export interface WorkspaceRegistry {
-    activeFileId: string | null;
     activeFile: string | null;
     contexts: Map<string, RecordContext>;
     setActiveFile: (fileid: string) => void;

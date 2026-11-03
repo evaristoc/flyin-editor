@@ -98,6 +98,7 @@ export interface Record {
     hoveredUuid: string | null;
     selectedUuid: string | null;
     setName: (name: string) => void;
+    setIsConfirmed: (v: boolean) => void;
     // setFileId: (newfileid: string) => void;
     updateLine: (modifiedRecord: LineRecord) => void;
     addLine: (newRecord: LineRecord) => void;

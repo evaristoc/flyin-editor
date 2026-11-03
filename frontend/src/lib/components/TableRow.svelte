@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import AddLineRecord from './AddLineRecord.svelte';
-	import type { ParsedFileContext, LineRecord } from '$lib/types/schema_types';
-	const dataStore = getContext<ParsedFileContext>('parsedFileContext');
+	import type { WorkspaceRegistry, Record, LineRecord } from '$lib/types/schema_types';
+
+	const workSpace = getContext<WorkspaceRegistry>('workSpace');
+	const dataStore = $derived<Record>(workSpace.contexts.get(workSpace.activeFile));
 
 	let {
 		index,

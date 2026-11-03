@@ -21,6 +21,9 @@ export function createRecord(initialId: string, initialName: string, rawText: st
         setName(newname: string) {
             name = newname;
         },
+        setIsConfirmed(v: boolean) {
+            isConfirmed = v;
+        },
         setRawText(rawText: string) {
             lines = parseToLineRecords(rawText);
             isConfirmed = true;

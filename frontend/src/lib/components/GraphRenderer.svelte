@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import type { RecordContext } from '$lib/types/schema_types';
-	import type { Graph } from '$lib/types/schema_types';
+	import type { Graph, Record, WorkspaceRegistry } from '$lib/types/schema_types';
 
-	let dataStore = getContext<RecordContext>('recordContext');
-	const solutionData: Graph | null = $derived(dataStore.data);
+	const workSpace = getContext<WorkspaceRegistry>('workSpace');
+	const dataStore = $derived<Record | undefined>(
+		workSpace.activeFile ? workSpace.contexts.get(workSpace.activeFile) : undefined
+	);
+	let solutionData: Graph | null = $derived(dataStore?.data ?? null);
 
 	let containerDiv: HTMLDivElement;
 	let KonvaModule: any = null;
@@ -25,6 +27,7 @@
 	// const fillSelColor = $derived(isHovered ? '#ff6b6b' : isSelected ? '#4dabf7' : '#adb5bd');
 
 	$effect(() => {
+		if (!dataStore) return;
 		const hovered = dataStore.hoveredUuid;
 		const selected = dataStore.selectedUuid;
 		if (!interactionLayer) return;

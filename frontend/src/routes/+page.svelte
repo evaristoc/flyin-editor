@@ -2,50 +2,65 @@
 	import FileDropzone from '$lib/components/FileDropzone.svelte';
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { getContext } from 'svelte';
-	import type { RecordContext, WorkspaceRegistry } from '$lib/types/schema_types';
+	import { createRecord } from '../model/recordModel.svelte.ts';
+	import type { Record, WorkspaceRegistry } from '$lib/types/schema_types';
 
-	const dataStore: RecordContext = getContext('recordContext');
 	const workSpace: WorkspaceRegistry = getContext('workSpace');
+	let dataStore = $state<Record | null>(null);
+	let hasFiles = $derived(workSpace.contexts.size > 0);
 	function handleFileLoaded(text: string, filename: string, fileid: string) {
 		try {
-			dataStore.setFileId(fileid);
-			dataStore.setName(filename);
-			dataStore.setRawText(text);
-			workSpace.addContext(dataStore);
-			if (dataStore.fileid) workSpace.setActiveFile(dataStore.fileid);
+			workSpace.addContext(createRecord(fileid, filename, text));
+			if (fileid) workSpace.setActiveFile(fileid);
+			dataStore = workSpace.contexts.get(fileid);
 		} catch (error) {
 			console.error('Failed to parse map configuration:', error);
 		}
 	}
 </script>
 
-<main class="fileload-container">
-	<h1>Load Map Configuration</h1>
-
-	{#if !dataStore.isConfirmed}
-		<p>Drop your configuration text file below to begin.</p>
-		<FileDropzone onFileLoaded={handleFileLoaded} />
-	{:else}
-		{workSpace.activeFile}
-		{dataStore.fileid}
-		<h2>Graph Visualization</h2>
-		<GraphRenderer />
-		<ConfigEditor />
+<div class="app-layout">
+	{hasFiles}
+	{#if hasFiles}
+		<Sidebar />
 	{/if}
-</main>
+	<main class="fileload-container">
+		<h1>Load Map Configuration</h1>
+
+		{#if !dataStore || !dataStore.isConfirmed}
+			<p>Drop your configuration text file below to begin.</p>
+			<FileDropzone onFileLoaded={handleFileLoaded} />
+		{:else}
+			{workSpace.activeFile}
+			<!-- {dataStore.fileid}
+			{dataStore.isConfirmed} -->
+			{workSpace.contexts.forEach((v) => console.log(v.fileid))}
+			<h2>Graph Visualization</h2>
+			<GraphRenderer />
+			<ConfigEditor />
+		{/if}
+	</main>
+</div>
 
 <style>
-	.dropzone {
-		border: 2px dashed #ccc;
-		padding: 20px;
-		text-align: center;
-		cursor: pointer;
+	.app-layout {
+		display: flex;
+		height: 100vh;
 	}
-
-	.dragging {
-		border-color: #000;
-		background: #f9f9f9;
+	.workspace-menu {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid #ccc;
+		padding-bottom: 0.5rem;
+		margin-bottom: 1rem;
+		font-size: 0.6rem;
+	}
+	.actions {
+		display: flex;
+		gap: 0.5rem;
 	}
 	.fileload-container {
 		max-width: 600px;
@@ -53,8 +68,5 @@
 		padding: 20px;
 		text-align: center;
 		font-family: sans-serif;
-	}
-	.result-view {
-		margin-top: 20px;
 	}
 </style>

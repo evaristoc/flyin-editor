@@ -10,20 +10,23 @@ import type { ZoneEdge, ZoneNode, LineRecord } from "$lib/types/schema_types";
 //     }
 // };
 
+export function createRecord(): void {
 
-// Entity creation with immutable UUID anchor (bidirectional ready)
-export function createRecord(raw: string, parsed: ParsedEntity): LineRecord {
-    return {
-        uuid: crypto.randomUUID(),
-        raw: raw,
-        type: parsed.type,
-        entity: parsed.entity ? {
-            ...parsed.entity,
-            uuid: crypto.randomUUID() // or system-level association if needed
-        } : undefined,
-        diagnostic: parsed.diagnostic
-    };
 }
+
+// // Entity creation with immutable UUID anchor (bidirectional ready)
+// export function createRecord(raw: string, parsed: ParsedEntity): LineRecord {
+//     return {
+//         uuid: crypto.randomUUID(),
+//         raw: raw,
+//         type: parsed.type,
+//         entity: parsed.entity ? {
+//             ...parsed.entity,
+//             uuid: crypto.randomUUID() // or system-level association if needed
+//         } : undefined,
+//         diagnostic: parsed.diagnostic
+//     };
+// }
 // Appending to the data store (text representation)
 export function appendRecord(records: LineRecord[], newRecord: LineRecord): LineRecord[] {
     return [...records, newRecord];

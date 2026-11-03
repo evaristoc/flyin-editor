@@ -88,7 +88,7 @@ export interface LineRecord {
 //     graph: Graph;
 // }
 
-export interface RecordContext {
+export interface Record {
     fileid: string | null;
     name: string | '';
     lines: LineRecord[];
@@ -98,7 +98,7 @@ export interface RecordContext {
     hoveredUuid: string | null;
     selectedUuid: string | null;
     setName: (name: string) => void;
-    setFileId: (newfileid: string) => void;
+    // setFileId: (newfileid: string) => void;
     updateLine: (modifiedRecord: LineRecord) => void;
     addLine: (newRecord: LineRecord) => void;
     moveLine: (sourceUuid: string, targetUuid: string) => void;

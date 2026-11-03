@@ -3,17 +3,16 @@
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
 	import { getContext } from 'svelte';
-	import type { RecordContext, WorkspaceRegistry } from '$lib/types/schema_types';
+	import { createRecord } from '../model/recordModel';
+	import type { Record, WorkspaceRegistry } from '$lib/types/schema_types';
 
-	const dataStore: RecordContext = getContext('recordContext');
 	const workSpace: WorkspaceRegistry = getContext('workSpace');
+	let dataStore = $state<Record | null>(null);
 	function handleFileLoaded(text: string, filename: string, fileid: string) {
 		try {
-			dataStore.setFileId(fileid);
-			dataStore.setName(filename);
-			dataStore.setRawText(text);
-			workSpace.addContext(dataStore);
-			if (dataStore.fileid) workSpace.setActiveFile(dataStore.fileid);
+			workSpace.addContext(createRecord(fileid, filename, text));
+			if (fileid) workSpace.setActiveFile(fileid);
+			dataStore = workSpace.contexts.get(fileid);
 		} catch (error) {
 			console.error('Failed to parse map configuration:', error);
 		}
@@ -23,7 +22,7 @@
 <main class="fileload-container">
 	<h1>Load Map Configuration</h1>
 
-	{#if !dataStore.isConfirmed}
+	{#if !dataStore || !dataStore.isConfirmed}
 		<p>Drop your configuration text file below to begin.</p>
 		<FileDropzone onFileLoaded={handleFileLoaded} />
 	{:else}
@@ -36,25 +35,11 @@
 </main>
 
 <style>
-	.dropzone {
-		border: 2px dashed #ccc;
-		padding: 20px;
-		text-align: center;
-		cursor: pointer;
-	}
-
-	.dragging {
-		border-color: #000;
-		background: #f9f9f9;
-	}
 	.fileload-container {
 		max-width: 600px;
 		margin: 40px auto;
 		padding: 20px;
 		text-align: center;
 		font-family: sans-serif;
-	}
-	.result-view {
-		margin-top: 20px;
 	}
 </style>

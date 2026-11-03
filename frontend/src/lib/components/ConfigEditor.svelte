@@ -2,9 +2,10 @@
 	import { getContext } from 'svelte';
 	import AddLineRecord from './AddLineRecord.svelte';
 	import TableRow from './TableRow.svelte';
-	import type { ParsedFileContext, LineRecord } from '$lib/types/schema_types';
+	import type { WorkspaceRegistry, LineRecord } from '$lib/types/schema_types';
 
-	const dataStore = getContext<ParsedFileContext>('parsedFileContext');
+	const workSpace = getContext<WorkspaceRegistry>('workSpace');
+	const dataStore = $derived(workSpace.contexts.get(workSpace.activeFile));
 	let lines = $derived(dataStore?.lines || []);
 	let isAdding: boolean = $state(false);
 	// let errorMessage: string = $state('');

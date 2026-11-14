@@ -8,6 +8,9 @@
 	import type { Record, WorkspaceRegistry } from '$lib/types/schema_types';
 
 	const workSpace: WorkspaceRegistry = getContext('workSpace');
+	// let dataStore = $derived(
+	// 	workSpace.activeFile ? workSpace.contexts.get(workSpace.activeFile) : undefined
+	// );
 	let dataStore = $state<Record | null>(null);
 	let hasFiles = $derived(workSpace.contexts.size > 0);
 	function handleFileLoaded(text: string, filename: string, fileid: string) {
@@ -22,20 +25,21 @@
 </script>
 
 <div class="app-layout">
-	{hasFiles}
 	{#if hasFiles}
 		<Sidebar />
 	{/if}
 	<main class="fileload-container">
 		<h1>Load Map Configuration</h1>
-
+		{hasFiles}
+		{dataStore}
 		{#if !dataStore || !dataStore.isConfirmed}
 			<p>Drop your configuration text file below to begin.</p>
 			<FileDropzone onFileLoaded={handleFileLoaded} />
 		{:else}
+			{hasFiles}
 			{workSpace.activeFile}
-			<!-- {dataStore.fileid}
-			{dataStore.isConfirmed} -->
+			{dataStore.fileid}
+			{dataStore.isConfirmed}
 			{workSpace.contexts.forEach((v) => console.log(v.fileid))}
 			<h2>Graph Visualization</h2>
 			<GraphRenderer />

@@ -7,7 +7,7 @@
 		workSpace.activeFile ? workSpace.contexts.get(workSpace.activeFile) : undefined
 	);
 	const recordsArray = $derived(Array.from(workSpace.contexts.values()));
-	console.log(recordsArray);
+	// console.log(recordsArray);
 	function handleCloseActive() {
 		if (dataStore) dataStore.setIsConfirmed(false);
 		dataStore = null;
@@ -19,6 +19,7 @@
 	<h2>Workspace Files</h2>
 	<div class="menu-actions">
 		<button onclick={handleCloseActive}>Close Active</button>
+		{workSpace.activeFile}
 	</div>
 	<ul>
 		{#each recordsArray as record (record.fileid)}

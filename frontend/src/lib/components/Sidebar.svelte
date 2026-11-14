@@ -1,16 +1,11 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import FilenameEdit from './FilenameEdit.svelte';
 	import type { WorkspaceRegistry } from '$lib/types/schema_types';
 
 	const workSpace = getContext<WorkspaceRegistry>('workSpace');
-	let dataStore = $derived(
-		workSpace.activeFile ? workSpace.contexts.get(workSpace.activeFile) : undefined
-	);
 	const recordsArray = $derived(Array.from(workSpace.contexts.values()));
-	console.log(recordsArray);
 	function handleCloseActive() {
-		if (dataStore) dataStore.setIsConfirmed(false);
-		dataStore = null;
 		workSpace.setActiveFile(null);
 	}
 </script>
@@ -19,6 +14,7 @@
 	<h2>Workspace Files</h2>
 	<div class="menu-actions">
 		<button onclick={handleCloseActive}>Close Active</button>
+		{workSpace.activeFile}
 	</div>
 	<ul>
 		{#each recordsArray as record (record.fileid)}
@@ -27,7 +23,7 @@
 					onclick={() => workSpace.setActiveFile(record.fileid)}
 					class:active={workSpace.activeFile === record.fileid}
 				>
-					{record.name}
+					<FilenameEdit file={record} registry={workSpace} />
 				</button>
 			</li>
 		{/each}

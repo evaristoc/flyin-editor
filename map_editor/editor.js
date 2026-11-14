@@ -8,7 +8,7 @@ let nodeCounter = 0;
 document.getElementById("imageLoader")
     .addEventListener("change", function (event) {
         let file = event.target.files[0];
-        console.log(file);
+        // console.log(file);
         let reader = new FileReader();
         reader.onload = function (e) {
             image.onload = function () {
@@ -84,7 +84,7 @@ function exportConfig() {
         text +=
             `${node.type}: ${node.name} ${node.x} ${node.y} [color=blue]\n`;
     }
-    console.log(text);
+    // console.log(text);
     let blob =
         new Blob(
             [text],

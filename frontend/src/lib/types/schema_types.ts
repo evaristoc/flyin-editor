@@ -116,6 +116,8 @@ export interface WorkspaceRegistry {
     setActiveFile: (fileid: string) => void;
     addContext: (recordcontext: RecordContext) => void;
     removeContext: (fileid: string) => void;
+    registerExportHandler(handler: (() => void) | null): void;
+    saveActiveFile(): boolean;
 }
 
 

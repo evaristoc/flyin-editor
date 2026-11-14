@@ -13,6 +13,12 @@
 	// );
 	let dataStore = $state<Record | null>(null);
 	let hasFiles = $derived(workSpace.contexts.size > 0);
+	$effect(() => {
+		if (!hasFiles) {
+			workSpace.setActiveFile(null);
+			dataStore = null;
+		}
+	});
 	function handleFileLoaded(text: string, filename: string, fileid: string) {
 		try {
 			workSpace.addContext(createRecord(fileid, filename, text));
@@ -32,13 +38,13 @@
 		<h1>Load Map Configuration</h1>
 		{hasFiles}
 		{dataStore}
-		{#if !dataStore || !dataStore.isConfirmed}
+		{#if !workSpace.activeFile}
 			<p>Drop your configuration text file below to begin.</p>
 			<FileDropzone onFileLoaded={handleFileLoaded} />
 		{:else}
-			{hasFiles}
-			{workSpace.activeFile}
-			{dataStore.fileid}
+			has files: {hasFiles}
+			active: {workSpace.activeFile}
+			fileid: {dataStore.fileId}
 			{dataStore.isConfirmed}
 			{workSpace.contexts.forEach((v) => console.log(v.fileid))}
 			<h2>Graph Visualization</h2>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { setContext } from 'svelte';
-	import { WorkspaceRegistry } from '../model/workspaceregistry.svelte';
+	import { WorkspaceRegistry } from '../model/workSpaceRegistryModel.svelte';
 	// import { SvelteMap } from 'svelte/reactivity';
 	// import type { Record, WorkspaceRegistry } from '$lib/types/schema_types';
 

@@ -12,6 +12,33 @@
 	let isUuidEditing = $state<string | null>(null);
 	let isDragging: boolean = $state(false);
 
+	$effect(() => {
+		if (!workSpace || typeof workSpace.registerExportHandler !== 'function') return;
+		const handleExport = () => {
+			// Serialize the live table and subcomponent state directly
+			if (workSpace.activeFile) {
+				const content = workSpace.contexts
+					.get(workSpace.activeFile)
+					.lines.map((line) => line.raw)
+					.join('\n');
+
+				const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = url;
+
+				const context = workSpace.contexts?.get(workSpace.activeFile);
+				link.download = context?.title || 'config.txt';
+				link.click();
+				URL.revokeObjectURL(url);
+			}
+		};
+		workSpace.registerExportHandler(handleExport);
+		return () => {
+			workSpace.registerExportHandler(null);
+		};
+	});
+
 	function handleAddRecord(newRecord: LineRecord) {
 		dataStore.addLine(newRecord);
 		// // Test verification logs

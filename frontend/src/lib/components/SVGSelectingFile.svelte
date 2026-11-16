@@ -1,0 +1,479 @@
+<svg
+	xmlns="http://w3.org"
+	viewBox="0 0 460 280"
+	width="100%"
+	height="100%"
+	style="max-width: 520px; display: block; margin: auto;"
+>
+	<style>
+		.title-text {
+			font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+			font-size: 13px;
+			font-weight: 600;
+			letter-spacing: 1.5px;
+			fill: #334155;
+			text-anchor: middle;
+		}
+
+		.panel-label {
+			font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+			font-size: 9px;
+			font-weight: 700;
+			letter-spacing: 1px;
+			fill: #64748b;
+		}
+
+		/* Pointer Cursor Animation */
+		.cursor-pointer {
+			animation: moveAndClick 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+		}
+
+		.click-ripple {
+			transform-origin: 95px 126px;
+			animation: rippleEffect 4.5s ease-out infinite;
+		}
+
+		/* Selected Sidebar Item Highlight */
+		.file-item-2 {
+			animation: selectFile 4.5s ease-in-out infinite;
+		}
+
+		/* Graph Nodes & Edges Drawing */
+		.node-1 {
+			transform-origin: 205px 105px;
+			animation: popNode1 4.5s ease-out infinite;
+		}
+		.edge-1 {
+			stroke-dasharray: 45;
+			animation: drawEdge1 4.5s ease-out infinite;
+		}
+		.node-2 {
+			transform-origin: 280px 105px;
+			animation: popNode2 4.5s ease-out infinite;
+		}
+		.edge-2 {
+			stroke-dasharray: 45;
+			animation: drawEdge2 4.5s ease-out infinite;
+		}
+		.node-3 {
+			transform-origin: 355px 105px;
+			animation: popNode3 4.5s ease-out infinite;
+		}
+
+		/* Config Content Skeleton Lines */
+		.config-lines {
+			animation: fadeConfig 4.5s ease-in-out infinite;
+		}
+
+		@keyframes moveAndClick {
+			0% {
+				transform: translate(115px, 165px) scale(1);
+				opacity: 0;
+			}
+			12% {
+				transform: translate(115px, 165px) scale(1);
+				opacity: 1;
+			}
+			25% {
+				transform: translate(92px, 122px) scale(1);
+			}
+			30% {
+				transform: translate(92px, 122px) scale(0.85);
+			} /* Click press */
+			35% {
+				transform: translate(92px, 122px) scale(1);
+				opacity: 1;
+			}
+			48% {
+				transform: translate(102px, 132px) scale(1);
+				opacity: 0;
+			}
+			100% {
+				transform: translate(115px, 165px) scale(1);
+				opacity: 0;
+			}
+		}
+
+		@keyframes rippleEffect {
+			0%,
+			29% {
+				transform: scale(0.2);
+				opacity: 0;
+			}
+			31% {
+				transform: scale(0.5);
+				opacity: 0.9;
+			}
+			44% {
+				transform: scale(1.8);
+				opacity: 0;
+			}
+			100% {
+				transform: scale(1.8);
+				opacity: 0;
+			}
+		}
+
+		@keyframes selectFile {
+			0%,
+			29% {
+				fill: #f8fafc;
+				stroke: #cbd5e1;
+			}
+			33%,
+			88% {
+				fill: #e0f2fe;
+				stroke: #3b82f6;
+			}
+			95%,
+			100% {
+				fill: #f8fafc;
+				stroke: #cbd5e1;
+			}
+		}
+
+		@keyframes popNode1 {
+			0%,
+			34% {
+				transform: scale(0);
+				opacity: 0;
+			}
+			42%,
+			88% {
+				transform: scale(1);
+				opacity: 1;
+			}
+			95%,
+			100% {
+				transform: scale(0);
+				opacity: 0;
+			}
+		}
+
+		@keyframes drawEdge1 {
+			0%,
+			40% {
+				stroke-dashoffset: 45;
+				opacity: 0;
+			}
+			42% {
+				opacity: 1;
+			}
+			50%,
+			88% {
+				stroke-dashoffset: 0;
+				opacity: 1;
+			}
+			95%,
+			100% {
+				stroke-dashoffset: 45;
+				opacity: 0;
+			}
+		}
+
+		@keyframes popNode2 {
+			0%,
+			47% {
+				transform: scale(0);
+				opacity: 0;
+			}
+			55%,
+			88% {
+				transform: scale(1);
+				opacity: 1;
+			}
+			95%,
+			100% {
+				transform: scale(0);
+				opacity: 0;
+			}
+		}
+
+		@keyframes drawEdge2 {
+			0%,
+			53% {
+				stroke-dashoffset: 45;
+				opacity: 0;
+			}
+			55% {
+				opacity: 1;
+			}
+			63%,
+			88% {
+				stroke-dashoffset: 0;
+				opacity: 1;
+			}
+			95%,
+			100% {
+				stroke-dashoffset: 45;
+				opacity: 0;
+			}
+		}
+
+		@keyframes popNode3 {
+			0%,
+			60% {
+				transform: scale(0);
+				opacity: 0;
+			}
+			68%,
+			88% {
+				transform: scale(1);
+				opacity: 1;
+			}
+			95%,
+			100% {
+				transform: scale(0);
+				opacity: 0;
+			}
+		}
+
+		@keyframes fadeConfig {
+			0%,
+			36% {
+				opacity: 0;
+				transform: translateY(4px);
+			}
+			48%,
+			88% {
+				opacity: 1;
+				transform: translateY(0px);
+			}
+			95%,
+			100% {
+				opacity: 0;
+				transform: translateY(4px);
+			}
+		}
+	</style>
+
+	<!-- Main Window Container -->
+	<rect
+		x="40"
+		y="30"
+		width="380"
+		height="190"
+		rx="14"
+		fill="#ffffff"
+		stroke="#334155"
+		stroke-width="2"
+	/>
+
+	<!-- Sidebar Divider -->
+	<line x1="155" y1="30" x2="155" y2="220" stroke="#334155" stroke-width="2" />
+
+	<!-- LEFT SIDEBAR: Stacked File List -->
+	<text x="54" y="52" class="panel-label">CONFIGS</text>
+
+	<!-- File Item 1 -->
+	<g transform="translate(52, 64)">
+		<rect
+			x="0"
+			y="0"
+			width="90"
+			height="32"
+			rx="6"
+			fill="#f8fafc"
+			stroke="#cbd5e1"
+			stroke-width="1.6"
+		/>
+		<!-- Mini file icon -->
+		<path
+			d="M 10 8 H 17 L 21 12 V 24 H 10 Z"
+			fill="#ffffff"
+			stroke="#64748b"
+			stroke-width="1.5"
+			stroke-linejoin="round"
+		/>
+		<!-- File name skeleton -->
+		<line
+			x1="28"
+			y1="13"
+			x2="72"
+			y2="13"
+			stroke="#64748b"
+			stroke-width="2.2"
+			stroke-linecap="round"
+		/>
+		<line
+			x1="28"
+			y1="19"
+			x2="56"
+			y2="19"
+			stroke="#94a3b8"
+			stroke-width="1.8"
+			stroke-linecap="round"
+		/>
+	</g>
+
+	<!-- File Item 2 (Target of click) -->
+	<g transform="translate(52, 106)">
+		<rect
+			class="file-item-2"
+			x="0"
+			y="0"
+			width="90"
+			height="32"
+			rx="6"
+			fill="#f8fafc"
+			stroke="#cbd5e1"
+			stroke-width="1.8"
+		/>
+		<!-- Mini file icon -->
+		<path
+			d="M 10 8 H 17 L 21 12 V 24 H 10 Z"
+			fill="#ffffff"
+			stroke="#1e293b"
+			stroke-width="1.5"
+			stroke-linejoin="round"
+		/>
+		<!-- File name skeleton -->
+		<line
+			x1="28"
+			y1="13"
+			x2="76"
+			y2="13"
+			stroke="#1e293b"
+			stroke-width="2.2"
+			stroke-linecap="round"
+		/>
+		<line
+			x1="28"
+			y1="19"
+			x2="62"
+			y2="19"
+			stroke="#475569"
+			stroke-width="1.8"
+			stroke-linecap="round"
+		/>
+	</g>
+
+	<!-- File Item 3 -->
+	<g transform="translate(52, 148)">
+		<rect
+			x="0"
+			y="0"
+			width="90"
+			height="32"
+			rx="6"
+			fill="#f8fafc"
+			stroke="#cbd5e1"
+			stroke-width="1.6"
+		/>
+		<!-- Mini file icon -->
+		<path
+			d="M 10 8 H 17 L 21 12 V 24 H 10 Z"
+			fill="#ffffff"
+			stroke="#64748b"
+			stroke-width="1.5"
+			stroke-linejoin="round"
+		/>
+		<!-- File name skeleton -->
+		<line
+			x1="28"
+			y1="13"
+			x2="68"
+			y2="13"
+			stroke="#64748b"
+			stroke-width="2.2"
+			stroke-linecap="round"
+		/>
+		<line
+			x1="28"
+			y1="19"
+			x2="50"
+			y2="19"
+			stroke="#94a3b8"
+			stroke-width="1.8"
+			stroke-linecap="round"
+		/>
+	</g>
+
+	<!-- RIGHT TOP: Linear Graph Preview Area -->
+	<text x="172" y="52" class="panel-label">GRAPH PREVIEW</text>
+	<rect
+		x="170"
+		y="62"
+		width="234"
+		height="82"
+		rx="8"
+		fill="#f8fafc"
+		stroke="#cbd5e1"
+		stroke-width="1.5"
+		stroke-dasharray="4 4"
+	/>
+
+	<!-- Graph Edges (Arrows between nodes) -->
+	<g fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<path class="edge-1" d="M 223 105 H 260 M 255 100 L 261 105 L 255 110" />
+		<path class="edge-2" d="M 298 105 H 335 M 330 100 L 336 105 L 330 110" />
+	</g>
+
+	<!-- Graph Nodes -->
+	<g class="node-1">
+		<circle cx="205" cy="105" r="15" fill="#e0f2fe" stroke="#1e293b" stroke-width="2" />
+		<circle cx="205" cy="105" r="4" fill="#3b82f6" />
+	</g>
+
+	<g class="node-2">
+		<circle cx="280" cy="105" r="15" fill="#e0f2fe" stroke="#1e293b" stroke-width="2" />
+		<circle cx="280" cy="105" r="4" fill="#3b82f6" />
+	</g>
+
+	<g class="node-3">
+		<circle cx="355" cy="105" r="15" fill="#e0f2fe" stroke="#1e293b" stroke-width="2" />
+		<circle cx="355" cy="105" r="4" fill="#3b82f6" />
+	</g>
+
+	<!-- RIGHT BOTTOM: Config File Content (Grey Sentence Blocks) -->
+	<line x1="155" y1="154" x2="420" y2="154" stroke="#e2e8f0" stroke-width="1.5" />
+
+	<g class="config-lines">
+		<!-- Line 1 (Key + Value block) -->
+		<rect x="172" y="165" width="42" height="7" rx="3.5" fill="#94a3b8" />
+		<rect x="220" y="165" width="95" height="7" rx="3.5" fill="#cbd5e1" />
+
+		<!-- Line 2 (Indented config block) -->
+		<rect x="184" y="179" width="54" height="7" rx="3.5" fill="#94a3b8" />
+		<rect x="244" y="179" width="120" height="7" rx="3.5" fill="#cbd5e1" />
+
+		<!-- Line 3 (Indented config block) -->
+		<rect x="184" y="193" width="36" height="7" rx="3.5" fill="#94a3b8" />
+		<rect x="226" y="193" width="84" height="7" rx="3.5" fill="#cbd5e1" />
+		<rect x="316" y="193" width="40" height="7" rx="3.5" fill="#e2e8f0" />
+	</g>
+
+	<!-- Click Ripple Feedback -->
+	<circle
+		class="click-ripple"
+		cx="95"
+		cy="126"
+		r="10"
+		fill="none"
+		stroke="#3b82f6"
+		stroke-width="2"
+	/>
+
+	<!-- Sketchy Pointer Hand Cursor -->
+	<g
+		class="cursor-pointer"
+		fill="#ffffff"
+		stroke="#1e293b"
+		stroke-width="1.8"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path
+			d="M 6 12 V 3 A 2.5 2.5 0 0 1 11 3 V 10 
+             A 2.5 2.5 0 0 1 16 10 V 11 
+             A 2.5 2.5 0 0 1 21 11 V 12 
+             A 2.5 2.5 0 0 1 25 13 V 21 
+             C 25 26 21 29 15 29 H 11 
+             C 6 29 4 25 2 21 L 0 17 
+             A 2.2 2.2 0 0 1 3.5 14.5 L 6 17 Z"
+		/>
+	</g>
+
+	<!-- Bottom Onboarding Label -->
+	<text x="230" y="248" class="title-text">SELECT A CONFIG TO PREVIEW</text>
+</svg>

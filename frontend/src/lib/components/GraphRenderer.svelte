@@ -52,7 +52,7 @@
 		stage = new Konva.Stage({
 			container: containerDiv,
 			width: containerDiv.clientWidth || 800,
-			height: 600
+			height: 300
 		});
 		const bgLayer = new Konva.Layer();
 		const gridLayer = new Konva.Layer();
@@ -101,7 +101,7 @@
 		};
 
 		const scaleY = (rawY: number) => {
-			const normalized = (rawY - minY) / deltaY; // Maps raw value to [0.0, 1.0]
+			const normalized = 1 - (rawY - minY) / deltaY; // Maps raw value to [0.0, 1.0]
 			return PAD + normalized * (height - PAD * 2); // Maps ratio to canvas viewport pixels
 		};
 
@@ -253,7 +253,7 @@
 	.canvas-container {
 		position: relative;
 		width: 100%;
-		height: 600px;
+		height: 400px;
 	}
 	.canvas-viewport {
 		width: 100%;

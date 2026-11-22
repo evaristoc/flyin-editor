@@ -124,11 +124,13 @@
 	}
 	tr:hover {
 		background-color: #f1f5f9;
+		cursor: pointer;
 	}
 
 	tr.drag-over {
 		background-color: #e2e8f0;
 		border-top: 2px solid #3b82f6;
+		cursor: grab;
 	}
 	.line-number {
 		user-select: none;

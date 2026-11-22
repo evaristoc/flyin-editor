@@ -1,5 +1,9 @@
 <script lang="ts">
 	import type { Record } from '$lib/types/schema_types';
+	import SVGFileDelete from './SVGFileDelete.svelte';
+	import SVGFileSave from './SVGFileSave.svelte';
+	import SVGFileEdit from './SVGFileIcon.svelte';
+	import SVGFileIcon from './SVGFileEdit.svelte';
 	import type { WorkspaceRegistry } from '$lib/services/WorkspaceRegistry';
 
 	let { file, registry }: { file: Record; registry: WorkspaceRegistry } = $props();
@@ -66,21 +70,62 @@
 			<span class="error-text">{errorMessage}</span>
 		{/if}
 	{:else}
-		<span
-			role="button"
-			tabindex="0"
-			onkeydown={handleSpanKeydown}
-			ondblclick={() => (isEditing = true)}>{file.name}</span
-		>
-		<button onclick={startEditing}>Rename</button>
-		<button onclick={handleDelete}>Delete</button>
-		{#if registry.activeFile === file.fileid}
-			<button onclick={() => registry.saveActiveFile()}>Save</button>
-		{/if}
+		<div class="file-meta">
+			<SVGFileIcon />
+			<span class="file-name" role="button" tabindex="0" onkeydown={handleSpanKeydown}
+				>{file.name}</span
+			>
+		</div>
+		<div class="file-actions">
+			<button class="action-start" onclick={startEditing}><SVGFileEdit /></button>
+			<button onclick={handleDelete}><SVGFileDelete /></button>
+			{#if registry.activeFile === file.fileid}
+				<button onclick={() => registry.saveActiveFile()}><SVGFileSave /></button>
+			{/if}
+		</div>
 	{/if}
 </div>
 
 <style>
+	.sidebar-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		width: 100%;
+		min-width: 0;
+	}
+
+	.file-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.file-name {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.file-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		flex: 0 0 auto;
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+
+	.file-actions button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
 	.error-text {
 		color: red;
 		font-size: 0.85rem;

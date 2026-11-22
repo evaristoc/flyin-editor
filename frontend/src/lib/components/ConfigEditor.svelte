@@ -60,6 +60,9 @@
 {#if lines}
 	<div class="viewer-container">
 		<h3>Configuration Text View</h3>
+		<p>
+			add a new line, modify existing one (double click) or drag and move it to another position
+		</p>
 		<pre class="config-display">
             <table class="config-table">
                 <tbody>
@@ -76,7 +79,7 @@
                 </tbody>
             </table>
             {#if !isAdding}
-				<button type="button" onclick={() => (isAdding = true)}>+ Add Line</button>
+				<button class="link-btn" onclick={() => (isAdding = true)}>+ Add Line...</button>
 			{/if}
         </pre>
 	</div>
@@ -109,5 +112,15 @@
 		border-collapse: collapse;
 		font-family: monospace;
 		font-size: 14px;
+	}
+	.link-btn {
+		padding: 0;
+		border: none;
+		background: transparent;
+		color: #475569;
+		font-family: inherit;
+		font-size: inherit;
+		text-decoration: none;
+		cursor: pointer;
 	}
 </style>

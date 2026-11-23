@@ -28,9 +28,9 @@ jobs:
           npm install
       - name: run build
         run: |
+          npm run build
           pwd
           ls -la
-          npm run build
       - name: upload pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

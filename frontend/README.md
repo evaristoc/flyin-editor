@@ -1,53 +1,7 @@
-# sv
+# About the Fly-In 42 Editor
+An unidirectional text-to-graph configuration manager built with Svelte 5 for the School 42's Fly-In project.
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.16.3 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" --install npm frontend
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-
-+page.ts
-    |
-    | fetch API
-    v
-+page.svelte
-    |
-    | data prop
-    v
-render graph
+## Core Architecture
+* **Single Source of Truth**: The text editor manages line-addressable data records.
+* **Reactive Visual Layer**: The graph canvas renders updates dynamically without disrupting user selections.
+* **Multi-File Isolation**: Manage multiple isolated record contexts safely within a single session.

@@ -1,0 +1,35 @@
+name: GithubPages deployment
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deployment:
+    name: gh-pages deployment
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+      - name: setup node
+        uses: actions/setup-node@7
+        with:
+          node-version: '24'
+      - name: run package.json
+        run: npm install
+      - name: run build
+        run: npm run build
+      - name: upload pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: frontend/build
+      - name: deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

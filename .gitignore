@@ -13,8 +13,6 @@ id_ed25519
 build/*
 dist/*
 
-.github/*
-
 # vscode #
 .vscode/*
 

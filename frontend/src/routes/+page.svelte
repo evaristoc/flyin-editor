@@ -106,7 +106,7 @@
 	<main class="fileload-container">
 		<header class="top-nav">
 			<div>
-				<b>Fly-In Editor</b> by
+				<b>Fly-In 42 Editor</b> by
 				<a class="nav-link" href="https://github.com/evaristoc/flyin-editor">evaristoc</a>
 			</div>
 			<nav class="nav-links">

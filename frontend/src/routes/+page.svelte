@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import FileDropzone from '$lib/components/FileDropzone.svelte';
 	import GraphRenderer from '$lib/components/GraphRenderer.svelte';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
@@ -110,7 +111,7 @@
 				<a class="nav-link" href="https://github.com/evaristoc/flyin-editor">evaristoc</a>
 			</div>
 			<nav class="nav-links">
-				<a href="/about" class="nav-link">About</a>
+				<a href={resolve('/about')} class="nav-link">About</a>
 				<button class="nav-link" onclick={() => (showOnboarding = true)}>Help</button>
 			</nav>
 		</header>

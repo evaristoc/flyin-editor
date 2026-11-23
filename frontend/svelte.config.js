@@ -7,7 +7,8 @@ const base = process.env.NODE_ENV === 'production' ? '/flyin42-editor' : '';
 const config = {
     kit: {
         paths: {
-            base: base
+            base: base,
+            relative: false
         },
         adapter: adapter({
             pages: 'build',

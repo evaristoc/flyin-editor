@@ -8,12 +8,9 @@ permissions:
   contents: read
 
 jobs:
-  deployment:
-    name: GH-Pages deployment
+  build:
+    name: Build and upload
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     defaults:
       run:
         working-directory: frontend
@@ -27,38 +24,31 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install nodejs dependencies
-        run: |
-          pwd
-          ls -la
-          npm install
+      - name: Install dependencies
+        run: npm install
 
       - name: Build
-        permissions:
-          pages: write
-          id-token: write        
-        run: |
-          npm run build
-          pwd
-          ls -la
+        run: npm run build
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: frontend/build
 
-    deploy:
-      needs: Build
-      permissions:
-        pages: write
-        id-token: write
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
 
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
 
-      steps:
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

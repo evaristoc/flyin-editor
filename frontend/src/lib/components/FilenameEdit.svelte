@@ -2,8 +2,8 @@
 	import type { Record } from '$lib/types/schema_types';
 	import SVGFileDelete from './SVGFileDelete.svelte';
 	import SVGFileSave from './SVGFileSave.svelte';
-	import SVGFileEdit from './SVGFileIcon.svelte';
-	import SVGFileIcon from './SVGFileEdit.svelte';
+	import SVGFileIcon from './SVGFileIcon.svelte';
+	import SVGFileEdit from './SVGFileEdit.svelte';
 	import type { WorkspaceRegistry } from '$lib/services/WorkspaceRegistry';
 
 	let { file, registry }: { file: Record; registry: WorkspaceRegistry } = $props();

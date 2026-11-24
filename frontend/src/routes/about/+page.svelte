@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 </script>
 
 <div class="about-container">
@@ -20,7 +21,7 @@
 		</li>
 	</ul>
 
-	<p><a href="/">Back to Fly-In Editor</a></p>
+	<p><a href={resolve('/')}>Back to Fly-In 42 Editor</a></p>
 </div>
 
 <style>

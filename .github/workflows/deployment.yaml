@@ -6,12 +6,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   deployment:
-    name: gh-pages deployment
+    name: GH-Pages deployment
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -19,28 +17,48 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v6
-      - name: setup node
+
+      - name: Setup node
         uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - name: run package.json
+
+      - name: Install nodejs dependencies
         run: |
           pwd
           ls -la
           npm install
-      - name: run build
+
+      - name: Build
+        permissions:
+          pages: write
+          id-token: write        
         run: |
           npm run build
           pwd
           ls -la
-      - name: upload pages artifact
+
+      - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: frontend/build
-      - name: deploy to github pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+
+    deploy:
+      needs: Build
+      permissions:
+        pages: write
+        id-token: write
+
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+
+      steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
 

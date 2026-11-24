@@ -1,4 +1,4 @@
-name: GithubPages deployment
+name: GHPages deployment
 
 on:
   push:

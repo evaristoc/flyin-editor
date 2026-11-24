@@ -1,5 +1,6 @@
 <script lang="ts">
-	import SVGFavicon from '$lib/components/SVGFavicon.svelte';
+	// import SVGFavicon from '$lib/components/SVGFavicon.svelte';
+	import favicon from '$lib/assets/favicon.svg?url';
 	import { setContext } from 'svelte';
 	import { WorkspaceRegistry } from '../model/workSpaceRegistryModel.svelte';
 	// import { SvelteMap } from 'svelte/reactivity';
@@ -45,7 +46,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={SVGFavicon} />
+	<link rel="icon" type="image/svg+xml" href={favicon} />
 </svelte:head>
 
 {@render children()}
